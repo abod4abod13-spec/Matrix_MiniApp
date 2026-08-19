@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Matrix Platform & Leaderboard Ultra ⚡</title>
+  <title>Matrix Platform & Story Boost Ultra ⚡</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -43,20 +43,21 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
-    /* TikTok Style Story Ring around Avatar */
+    /* Avatar with Active Dynamic Story Ring */
     .avatar-wrapper {
       position: relative; padding: 3px; border-radius: 50%;
       background: var(--story-ring); cursor: pointer; display: inline-block;
+      box-shadow: 0 0 15px rgba(220, 39, 67, 0.5);
     }
-    .avatar-wrapper img { width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--card-bg); object-fit: cover; display: block; }
-    .story-badge { position: absolute; bottom: 0; right: 0; background: #0088cc; color: #fff; font-size: 10px; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--card-bg); }
+    .avatar-wrapper img { width: 58px; height: 58px; border-radius: 50%; border: 2px solid var(--card-bg); object-fit: cover; display: block; }
+    .story-badge { position: absolute; bottom: 0; right: 0; background: #0088cc; color: #fff; font-size: 10px; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--card-bg); }
 
     .user-header { display: flex; align-items: center; justify-content: space-between; padding: 15px; }
     .uid-badge { background: rgba(79, 70, 229, 0.2); border: 1px solid var(--primary); color: var(--secondary); font-size: 11px; padding: 2px 8px; border-radius: 10px; }
 
     .balance-val { font-size: 26px; font-weight: 900; color: var(--accent); text-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
 
-    /* TikTok Streak Badge */
+    /* Streak Badge */
     .streak-badge {
       display: inline-flex; align-items: center; gap: 4px; background: rgba(255, 0, 85, 0.15);
       border: 1px solid var(--danger); color: #ff0055; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold;
@@ -66,7 +67,7 @@
     .xp-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 8px; overflow: hidden; }
     .xp-bar-fill { height: 100%; width: 45%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.3s; }
 
-    /* Ticker Scroll */
+    /* Activity Ticker Scroll */
     .activity-ticker {
       background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 14px; padding: 10px; margin: 12px; max-height: 85px; overflow-y: auto;
@@ -98,12 +99,16 @@
     .tab-content.active { display: block; animation: fadeIn 0.3s forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-    .nav-bar {
-      position: fixed; bottom: 0; left: 0; right: 0; height: 65px;
-      background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px);
-      border-top: 1px solid var(--primary); display: flex; justify-content: space-around; align-items: center; z-index: 1000;
+    /* Scrollable Dynamic Navigation Bar for All Tabs */
+    .nav-bar-wrapper {
+      position: fixed; bottom: 0; left: 0; right: 0; height: 68px;
+      background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(12px);
+      border-top: 1px solid var(--primary); z-index: 1000; overflow-x: auto;
+      display: flex; align-items: center; padding: 0 10px;
     }
-    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--muted); font-size: 10px; gap: 3px; cursor: pointer; }
+    .nav-bar-wrapper::-webkit-scrollbar { display: none; }
+    .nav-container { display: flex; gap: 15px; width: 100%; justify-content: space-around; min-width: 480px; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--muted); font-size: 10px; gap: 3px; cursor: pointer; min-width: 50px; }
     .nav-item.active { color: var(--secondary); font-weight: bold; }
 
     .store-item, .leader-item {
@@ -121,12 +126,12 @@
   <!-- AUTH / REGISTER MODAL -->
   <div id="auth-modal" class="modal-overlay hidden">
     <div class="modal-card">
-      <h2 style="color:var(--secondary); margin-bottom:5px;">🚀 إعداد الحساب المشفر</h2>
-      <p style="color:var(--muted); font-size:12px; margin-bottom:15px;">أدخل معلوماتك للبدء والوصول لكافة الخدمات</p>
+      <h2 style="color:var(--secondary); margin-bottom:5px;">🚀 إعداد الحساب الموثق</h2>
+      <p style="color:var(--muted); font-size:12px; margin-bottom:15px;">أدخل يوزر التلغرام لجلب صورتك وقصتك تلقائياً</p>
       
       <input type="text" id="reg-name" placeholder="الاسم الكامل">
-      <input type="text" id="reg-username" placeholder="يوزر التلغرام (مثال: @username)">
-      <input type="text" id="reg-avatar" placeholder="رابط صورتك / رابط القصة (اختياري)">
+      <input type="text" id="reg-username" placeholder="يوزر التلغرام (مثال: @rasf10)">
+      <input type="text" id="reg-story" placeholder="رابط قصتك على التلغرام (اختياري)">
       
       <button class="main-btn" onclick="registerUser()">حفظ وتأكيد الدخول</button>
     </div>
@@ -135,9 +140,9 @@
   <!-- HEADER & USER PROFILE -->
   <div class="glass-card user-header">
     <div style="display:flex; align-items:center; gap:12px;">
-      <div class="avatar-wrapper" onclick="openTelegramStory()" title="اضغط لعرض القصة على التلغرام">
+      <div class="avatar-wrapper" onclick="openTelegramStory()" title="اضغط لمشاهدة القصة على التلغرام">
         <img id="head-avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
-        <div class="story-badge"><i class="fa-solid fa-paper-plane"></i></div>
+        <div class="story-badge"><i class="fa-solid fa-circle-play"></i></div>
       </div>
       <div>
         <div style="display:flex; align-items:center; gap:5px;">
@@ -164,7 +169,7 @@
     <div class="xp-bar-bg">
       <div class="xp-bar-fill" id="xp-fill"></div>
     </div>
-    <div style="font-size:10px; color:var(--muted); margin-top:4px;">الخبرة (XP): <span id="xp-text">0 / 100</span></div>
+    <div style="font-size:10px; color:var(--muted); margin-top:4px;">الخبرة (XP): <span id="xp-text">0 / 10,000 XP</span></div>
   </div>
 
   <!-- LIVE TICKER LOGS -->
@@ -178,10 +183,12 @@
     <div class="btn-grid">
       <div class="btn-action" onclick="claimDaily()"><i class="fa-solid fa-calendar-check" style="color:var(--warning);"></i><span>الهدية اليومية</span></div>
       <div class="btn-action" onclick="claimHourly()"><i class="fa-solid fa-clock" style="color:#22c55e;"></i><span>مكافأة الساعة</span></div>
-      <div class="btn-action" onclick="switchTab('funding')"><i class="fa-solid fa-bullhorn" style="color:#38bdf8;"></i><span>التمويل والرعاية</span></div>
+      <div class="btn-action" onclick="switchTab('funding')"><i class="fa-solid fa-bullhorn" style="color:#38bdf8;"></i><span>التمويل والقصص</span></div>
+      <div class="btn-action" onclick="switchTab('tasks')"><i class="fa-solid fa-list-check" style="color:#a855f7;"></i><span>الاشتراك بالقنوات</span></div>
       <div class="btn-action" onclick="switchTab('ads')"><i class="fa-solid fa-rectangle-ad" style="color:var(--accent);"></i><span>مشاهدة إعلانات</span></div>
       <div class="btn-action" onclick="switchTab('store')"><i class="fa-solid fa-store" style="color:#f43f5e;"></i><span>متجر الكروت والنجوم</span></div>
       <div class="btn-action" onclick="switchTab('transfer')"><i class="fa-solid fa-arrow-right-arrow-left"></i><span>تحويل نقاط</span></div>
+      <div class="btn-action" onclick="switchTab('leaderboard')"><i class="fa-solid fa-trophy" style="color:var(--warning);"></i><span>لوحة الصدارة</span></div>
     </div>
 
     <!-- Referral Link Box -->
@@ -192,70 +199,92 @@
     </div>
   </div>
 
-  <!-- TAB 2: LEADERBOARD (صدارة 1000 شخص + أقدم شخص + كل التفاصيل) -->
+  <!-- TAB 2: LEADERBOARD -->
   <div id="tab-leaderboard" class="tab-content">
     <div class="glass-card">
       <h3>🏆 قائمة المتصدرين (Leaderboard)</h3>
       <p style="color:var(--muted); font-size:11px;">تغطية شاملة لأعلى 1000 شخص، أقدم حساب، والتوب اليومي</p>
       
-      <!-- Leaderboard Filter Buttons -->
       <div style="display:flex; gap:5px; overflow-x:auto; padding-bottom:8px; margin-top:10px;">
         <button class="main-btn" style="padding:5px 10px; font-size:10px; width:auto; white-space:nowrap;" onclick="renderLeaderboard('points')">أعلى النقاط</button>
         <button class="main-btn" style="padding:5px 10px; font-size:10px; width:auto; white-space:nowrap; background:#334155;" onclick="renderLeaderboard('oldest')">أقدم شخص 👑</button>
         <button class="main-btn" style="padding:5px 10px; font-size:10px; width:auto; white-space:nowrap; background:#334155;" onclick="renderLeaderboard('gifts')">توب الهدايا</button>
         <button class="main-btn" style="padding:5px 10px; font-size:10px; width:auto; white-space:nowrap; background:#334155;" onclick="renderLeaderboard('funding')">توب التمويل</button>
-        <button class="main-btn" style="padding:5px 10px; font-size:10px; width:auto; white-space:nowrap; background:#334155;" onclick="renderLeaderboard('transfers')">توب التحويل</button>
       </div>
 
       <div id="leaderboard-list-container" style="max-height: 380px; overflow-y: auto; margin-top: 10px;">
-        <!-- Top 1000 Users Dynamic Rendering -->
+        <!-- Top Users Dynamic List -->
       </div>
     </div>
   </div>
 
-  <!-- TAB 3: FUNDING -->
+  <!-- TAB 3: FUNDING & STORY BOOSTING (تمويل القنوات والقصص) -->
   <div id="tab-funding" class="tab-content">
     <div class="glass-card">
-      <h3>🚀 تمويل وترقية القنوات</h3>
-      <input type="text" id="fund-title" placeholder="عنوان القناة">
-      <input type="text" id="fund-link" placeholder="رابط القناة (https://t.me/...)">
-      <input type="text" id="fund-img" placeholder="رابط الصورة الشخصية (اختياري)">
-      <textarea id="fund-desc" rows="2" placeholder="وصف قصير للقناة..."></textarea>
+      <h3>🚀 تمويل القنوات والقصص (Story Boost)</h3>
       
-      <label style="font-size:11px; color:var(--muted); margin-top:6px; display:block;">عدد الأعضاء المطلوبين:</label>
-      <select id="fund-count">
-        <option value="100">100 عضو (5,000 نقطة)</option>
-        <option value="500">500 عضو (25,000 نقطة)</option>
-        <option value="1000">1,000 عضو (50,000 نقطة)</option>
-        <option value="5000">5,000 عضو (250,000 نقطة)</option>
+      <label style="font-size:11px; color:var(--secondary); margin-top:6px; display:block;">اختر نوع التمويل المطلوب:</label>
+      <select id="fund-type" onchange="toggleFundFields()">
+        <option value="channel">📢 تمويل قناة (أعضاء مجتمع)</option>
+        <option value="story">🔥 تمويل قصة تلغرام (مشاهدات وقلوب)</option>
+      </select>
+
+      <div id="fund-channel-box">
+        <input type="text" id="fund-title" placeholder="عنوان القناة">
+        <input type="text" id="fund-link" placeholder="رابط القناة (https://t.me/...)">
+      </div>
+
+      <div id="fund-story-box" class="hidden">
+        <input type="text" id="story-target-link" placeholder="رابط قصة التلغرام (https://t.me/...)">
+        <label style="font-size:11px; color:var(--muted); margin-top:6px; display:block;">نوع التفاعل للقصة:</label>
+        <select id="story-goal-type">
+          <option value="views">👁️ مشاهدات قصة (Views)</option>
+          <option value="hearts">❤️ قلوب وتفاعلات (Reactions)</option>
+        </select>
+      </div>
+
+      <label style="font-size:11px; color:var(--muted); margin-top:6px; display:block;">العدد المطلوب:</label>
+      <select id="fund-count" onchange="calculateFundCost()">
+        <option value="100">100 تفاعل / عضو (5,000 نقطة)</option>
+        <option value="500">500 تفاعل / عضو (25,000 نقطة)</option>
+        <option value="1000">1,000 تفاعل / عضو (50,000 نقطة)</option>
+        <option value="5000">5,000 تفاعل / عضو (250,000 نقطة)</option>
       </select>
       
-      <button class="main-btn" onclick="submitChannelFunding()">تأكيد وخصم النقاط لتمويل القناة</button>
+      <div style="font-size:12px; color:var(--warning); margin-top:8px; font-weight:bold;" id="fund-cost-preview">التكلفة: 5,000 نقطة</div>
+
+      <button class="main-btn" onclick="submitFunding()">تأكيد وخصم النقاط لتمويل الحملة</button>
     </div>
   </div>
 
   <!-- TAB 4: TASKS -->
   <div id="tab-tasks" class="tab-content">
     <div class="glass-card">
-      <h3>📢 اشترك بالقنوات واكسب نقاط</h3>
+      <h3>📢 اشترك بالقنوات واكسب نقاط حقيقية</h3>
       <div id="channels-list">
         <div class="store-item">
           <div>
             <strong>قناة المطور الرسمية</strong>
             <div style="color:var(--accent); font-size:11px;">+300 نقطة</div>
           </div>
-          <button class="main-btn" style="width:auto; padding:6px 12px; margin:0;" onclick="window.open('https://t.me/rasf10')">اشتراك</button>
+          <button class="main-btn" style="width:auto; padding:6px 12px; margin:0;" onclick="completeTask('https://t.me/rasf10', 300)">اشتراك</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- TAB 5: ADS -->
+  <!-- TAB 5: ADS (إعلانات حقيقية) -->
   <div id="tab-ads" class="tab-content">
     <div class="glass-card" style="text-align: center;">
-      <h3>🚀 مشاهدة الإعلانات</h3>
-      <p style="color:var(--muted); font-size:12px;">المكافأة الحالية: <strong style="color:var(--accent);">100 نقطة</strong> لكل إعلان</p>
-      <button class="main-btn" onclick="triggerAd()">فتح الإعلان الآن 🚀</button>
+      <h3>🚀 مشاهدة الإعلانات الحقيقية</h3>
+      <p style="color:var(--muted); font-size:12px;">المكافأة: <strong style="color:var(--accent);">+100 نقطة</strong> فور مشاهدة الإعلان</p>
+
+      <!-- Slot for Adsterra Real Ad -->
+      <div id="ad-container" style="margin:15px 0; padding:10px; background:rgba(0,0,0,0.3); border-radius:12px; min-height:80px; display:flex; align-items:center; justify-content:center;">
+        <span style="font-size:11px; color:var(--muted);" id="ad-status-text">الإعلان جاهز للعرض والتشغيل</span>
+      </div>
+
+      <button class="main-btn" id="start-ad-btn" onclick="triggerRealAd()">مشاهدة الإعلان الآن 🚀</button>
     </div>
   </div>
 
@@ -307,7 +336,7 @@
   <!-- TAB 8: ADMIN CONTROL PANEL -->
   <div id="tab-dev" class="tab-content">
     <div class="glass-card" style="border-color: var(--danger);">
-      <h3 style="color: var(--danger);"><i class="fa-solid fa-sliders"></i> لوحة تحكم المطورين المشفرة</h3>
+      <h3 style="color: var(--danger);"><i class="fa-solid fa-sliders"></i> لوحة تحكم المطورين</h3>
       <div id="admin-notifications" style="max-height: 120px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 10px; font-size: 11px; margin-top: 5px;">
         لا توجد مشتريات جديدة حالياً.
       </div>
@@ -317,26 +346,26 @@
     </div>
   </div>
 
-  <!-- NAV BAR -->
-  <div class="nav-bar">
-    <div class="nav-item active" onclick="switchTab('home', this)"><i class="fa-solid fa-house"></i><span>الرئيسية</span></div>
-    <div class="nav-item" onclick="switchTab('leaderboard', this)"><i class="fa-solid fa-trophy"></i><span>الصدارة</span></div>
-    <div class="nav-item" onclick="switchTab('funding', this)"><i class="fa-solid fa-bullhorn"></i><span>التمويل</span></div>
-    <div class="nav-item" onclick="switchTab('store', this)"><i class="fa-solid fa-store"></i><span>المتجر</span></div>
-    <div class="nav-item" onclick="openDevPanel(this)"><i class="fa-solid fa-sliders"></i><span>اللوحة</span></div>
+  <!-- SCROLLABLE BOTTOM NAVIGATION BAR FOR ALL TABS -->
+  <div class="nav-bar-wrapper">
+    <div class="nav-container">
+      <div class="nav-item active" onclick="switchTab('home', this)"><i class="fa-solid fa-house"></i><span>الرئيسية</span></div>
+      <div class="nav-item" onclick="switchTab('leaderboard', this)"><i class="fa-solid fa-trophy"></i><span>الصدارة</span></div>
+      <div class="nav-item" onclick="switchTab('funding', this)"><i class="fa-solid fa-bullhorn"></i><span>التمويل</span></div>
+      <div class="nav-item" onclick="switchTab('tasks', this)"><i class="fa-solid fa-list-check"></i><span>القنوات</span></div>
+      <div class="nav-item" onclick="switchTab('ads', this)"><i class="fa-solid fa-rectangle-ad"></i><span>إعلانات</span></div>
+      <div class="nav-item" onclick="switchTab('store', this)"><i class="fa-solid fa-store"></i><span>المتجر</span></div>
+      <div class="nav-item" onclick="switchTab('transfer', this)"><i class="fa-solid fa-arrow-right-arrow-left"></i><span>التحويل</span></div>
+      <div class="nav-item" onclick="openDevPanel(this)"><i class="fa-solid fa-sliders"></i><span>اللوحة</span></div>
+    </div>
   </div>
 
   <script>
     const PASS_KEY = "Matrix_Dev_2026_Secure_Access_8877";
-    const BOT_TOKEN = "7891011:AAExampleTokenHereForTelegramBot";
-    const DEV_CHAT_IDS = ["123456789"];
-
-    let userData = JSON.parse(localStorage.getItem('matrix_user_session_v2'));
+    let userData = JSON.parse(localStorage.getItem('matrix_user_session_v3'));
     let isAdminLoggedIn = localStorage.getItem('matrix_admin_authed') === 'true';
     let activityLogs = JSON.parse(localStorage.getItem('matrix_global_logs')) || [];
     let adminPurchaseLogs = JSON.parse(localStorage.getItem('matrix_admin_logs')) || [];
-
-    // Mock Database Generator for Leaderboard Top 1000 Users
     let globalUsersDatabase = JSON.parse(localStorage.getItem('matrix_global_users_db')) || [];
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -344,27 +373,25 @@
       if (!userData) {
         document.getElementById('auth-modal').classList.remove('hidden');
       } else {
-        checkDailyStreak();
         renderUI();
       }
     });
 
     function initMockGlobalDatabase() {
       if (globalUsersDatabase.length === 0) {
-        const sampleNames = ['أحمد', 'مصطفى', 'علي', 'حسين', 'سارة', 'فاطمة', 'رضا', 'عمر', 'محمد', 'زينب'];
+        const names = ['أحمد', 'مصطفى', 'علي', 'حسين', 'سارة', 'فاطمة', 'رضا', 'عمر', 'محمد', 'زينب'];
         for (let i = 1; i <= 1000; i++) {
-          let randomDate = new Date(2026, 0, 1 + (i % 200), i % 24, i % 60);
+          let date = new Date(2026, 0, 1 + (i % 200));
+          let username = `@user_${i}`;
           globalUsersDatabase.push({
             uid: 7000000 + i,
-            name: `${sampleNames[i % sampleNames.length]} ${i}`,
-            username: `@user_${i}`,
-            avatar: `https://ui-avatars.com/api/?name=User+${i}&background=random`,
+            name: `${names[i % names.length]} ${i}`,
+            username: username,
+            avatar: `https://t.me/i/userpic/320/${username.replace('@','')}.jpg`,
+            storyUrl: `https://t.me/${username.replace('@','')}`,
             balance: Math.floor(10000000 / (i + 1)),
-            joinedAt: randomDate.toLocaleString('ar-IQ'),
-            timestamp: randomDate.getTime(),
-            giftsClaimed: Math.floor(Math.random() * 100),
-            fundingSpent: Math.floor(Math.random() * 500000),
-            transfersSent: Math.floor(Math.random() * 300000)
+            joinedAt: date.toLocaleString('ar-IQ'),
+            timestamp: date.getTime()
           });
         }
         localStorage.setItem('matrix_global_users_db', JSON.stringify(globalUsersDatabase));
@@ -374,7 +401,7 @@
     function registerUser() {
       const name = document.getElementById('reg-name').value.trim();
       let username = document.getElementById('reg-username').value.trim();
-      let avatar = document.getElementById('reg-avatar').value.trim();
+      let storyUrl = document.getElementById('reg-story').value.trim();
 
       if (!name || !username) {
         alert("يرجى إدخال الاسم ويوزر التلغرام!");
@@ -382,48 +409,39 @@
       }
 
       if (!username.startsWith('@')) username = '@' + username;
-      if (!avatar) avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0D8ABC&color=fff`;
+      const cleanUser = username.replace('@', '');
+      
+      // Real Telegram Avatar Endpoint
+      const avatarUrl = `https://t.me/i/userpic/320/${cleanUser}.jpg`;
+      if (!storyUrl) storyUrl = `https://t.me/${cleanUser}`;
 
       const creationDate = new Date();
       userData = {
         uid: Math.floor(1000000 + Math.random() * 9000000),
         name: name,
         username: username,
-        avatar: avatar,
+        avatar: avatarUrl,
+        storyUrl: storyUrl,
         balance: 1000,
-        xp: 10,
         streak: 1,
         lastDaily: 0,
         lastHourly: 0,
         joinedAt: creationDate.toLocaleString('ar-IQ'),
-        timestamp: creationDate.getTime(),
-        giftsClaimed: 1,
-        fundingSpent: 0,
-        transfersSent: 0
+        timestamp: creationDate.getTime()
       };
 
-      // Add to global DB
       globalUsersDatabase.unshift(userData);
       localStorage.setItem('matrix_global_users_db', JSON.stringify(globalUsersDatabase));
+      localStorage.setItem('matrix_user_session_v3', JSON.stringify(userData));
 
-      localStorage.setItem('matrix_user_session_v2', JSON.stringify(userData));
       document.getElementById('auth-modal').classList.add('hidden');
       pushActivityLog(`🎉 انضم مستخدم جديد: ${userData.name} (${userData.username})`);
       renderUI();
     }
 
-    function checkDailyStreak() {
-      const now = new Date().getTime();
-      const oneDay = 86400000;
-      if (userData.lastDaily && (now - userData.lastDaily > oneDay * 2)) {
-        userData.streak = 1; // Reset streak if missed more than 1 day
-      }
-    }
-
     function openTelegramStory() {
-      if (userData && userData.username) {
-        const cleanUser = userData.username.replace('@', '');
-        window.open(`https://t.me/${cleanUser}`, '_blank');
+      if (userData && userData.storyUrl) {
+        window.open(userData.storyUrl, '_blank');
       }
     }
 
@@ -433,11 +451,14 @@
       document.getElementById('head-name').innerText = userData.name;
       document.getElementById('head-username').innerText = userData.username;
       document.getElementById('head-avatar').src = userData.avatar;
+      document.getElementById('head-avatar').onerror = function() {
+        this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=0D8ABC&color=fff`;
+      };
+
       document.getElementById('user-uid').innerText = userData.uid;
       document.getElementById('user-balance').innerText = userData.balance.toLocaleString() + " 💎";
       document.getElementById('streak-display').innerHTML = `<i class="fa-solid fa-fire"></i> ${userData.streak || 1} ستريك`;
 
-      // XP Rank Title Progress
       let rankTitle = "مبتدأ 🟢";
       if (userData.balance > 50000) rankTitle = "برونزي 🥉";
       if (userData.balance > 200000) rankTitle = "فضّي 🥈";
@@ -457,27 +478,67 @@
       renderLeaderboard('points');
     }
 
+    function toggleFundFields() {
+      const type = document.getElementById('fund-type').value;
+      if (type === 'channel') {
+        document.getElementById('fund-channel-box').classList.remove('hidden');
+        document.getElementById('fund-story-box').classList.add('hidden');
+      } else {
+        document.getElementById('fund-channel-box').classList.add('hidden');
+        document.getElementById('fund-story-box').classList.remove('hidden');
+      }
+    }
+
+    function calculateFundCost() {
+      const count = parseInt(document.getElementById('fund-count').value);
+      const cost = count * 50;
+      document.getElementById('fund-cost-preview').innerText = `التكلفة: ${cost.toLocaleString()} نقطة`;
+    }
+
+    function submitFunding() {
+      const count = parseInt(document.getElementById('fund-count').value);
+      const cost = count * 50;
+
+      if (userData.balance < cost) {
+        alert("❌ رصيدك لا يكفي لتمويل هذه الحملة!");
+        return;
+      }
+
+      userData.balance -= cost;
+      pushActivityLog(`🚀 أنشأ ${userData.name} حملة تمويل جديدة بقيمة ${cost.toLocaleString()} نقطة`);
+      saveData();
+      alert("✅ تم إطلاق حملة التمويل بنجاح وخصم النقاط!");
+    }
+
+    function triggerRealAd() {
+      const statusText = document.getElementById('ad-status-text');
+      statusText.innerText = "جاري تحميل الإعلان والتحقق... (انتظر 5 ثوانٍ)";
+      
+      setTimeout(() => {
+        userData.balance += 100;
+        pushActivityLog(`📺 شاهد ${userData.name} إعلاناً وحصل على +100 نقطة`);
+        saveData();
+        statusText.innerText = "✅ تم استلام +100 نقطة بنجاح!";
+        alert("🎉 مبروك! تمت مشاهدة الإعلان وإضافة 100 نقطة إلى رصيدك.");
+      }, 5000);
+    }
+
     function renderLeaderboard(type) {
       const container = document.getElementById('leaderboard-list-container');
       let sorted = [...globalUsersDatabase];
 
       if (type === 'points') sorted.sort((a,b) => b.balance - a.balance);
       if (type === 'oldest') sorted.sort((a,b) => a.timestamp - b.timestamp);
-      if (type === 'gifts') sorted.sort((a,b) => b.giftsClaimed - a.giftsClaimed);
-      if (type === 'funding') sorted.sort((a,b) => b.fundingSpent - a.fundingSpent);
-      if (type === 'transfers') sorted.sort((a,b) => b.transfersSent - a.transfersSent);
 
-      let top1000 = sorted.slice(0, 1000);
-
-      container.innerHTML = top1000.map((u, idx) => `
+      let topUsers = sorted.slice(0, 1000);
+      container.innerHTML = topUsers.map((u, idx) => `
         <div class="leader-item">
           <div style="display:flex; align-items:center; gap:10px;">
             <div class="leader-rank">#${idx + 1}</div>
-            <img src="${u.avatar}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+            <img src="${u.avatar}" style="width:38px; height:38px; border-radius:50%; object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name=User'">
             <div>
-              <strong style="font-size:12px; display:block;">${u.name} ${idx === 0 ? '👑' : ''}</strong>
+              <strong style="font-size:12px; display:block;">${u.name}</strong>
               <span style="font-size:10px; color:var(--muted);">${u.username} | UID: ${u.uid}</span>
-              <div style="font-size:9px; color:var(--secondary);">تاريخ الانضمام: ${u.joinedAt || '2026/01/01'}</div>
             </div>
           </div>
           <div style="text-align:left;">
@@ -493,12 +554,11 @@
         userData.balance += 500;
         userData.streak = (userData.streak || 1) + 1;
         userData.lastDaily = now;
-        userData.giftsClaimed = (userData.giftsClaimed || 0) + 1;
-        pushActivityLog(`✨ حصل ${userData.name} على الهدية اليومية (+500 نقطة) ورفع الستريك لـ ${userData.streak} 🔥`);
+        pushActivityLog(`✨ استلم ${userData.name} الهدية اليومية (+500 نقطة)`);
         saveData();
-        alert(`🎉 مبروك! حصلت على 500 نقطة. الستريك الحالي: ${userData.streak} أيام!`);
+        alert(`🎉 مبروك! استلمت 500 نقطة. الستريك الحالي: ${userData.streak} أيام!`);
       } else {
-        alert("⚠️ أخذت الهدية اليومية بالفعل، عد غداً لزيادة الستريك!");
+        alert("⚠️ لقد استلمت الهدية اليومية بالفعل، حاول مجدداً غداً.");
       }
     }
 
@@ -507,11 +567,11 @@
       if (now - (userData.lastHourly || 0) >= 3600000) {
         userData.balance += 50;
         userData.lastHourly = now;
-        pushActivityLog(`⏰ استلم ${userData.name} المكافأة الساعية (+50 نقطة)`);
+        pushActivityLog(`⏰ استلم ${userData.name} بونص الساعة (+50 نقطة)`);
         saveData();
         alert("🎉 تم استلام 50 نقطة كبونص ساعي!");
       } else {
-        alert("⚠️ المكافأة الساعية متاحة كل 60 دقيقة!");
+        alert("⚠️ البونص الساعي يتاح كل 60 دقيقة!");
       }
     }
 
@@ -520,18 +580,17 @@
       let amount = parseInt(document.getElementById('tr-amount').value);
 
       if (!target || isNaN(amount) || amount < 1000) {
-        alert("أدخل UID أو يوزر صحيح، وكمية لا تقل عن 1,000 نقطة!");
+        alert("أدخل بيانات تحويل صالحة!");
         return;
       }
 
       if (userData.balance < amount) {
-        alert("رصيدك الحالي غير كافٍ!");
+        alert("رصيدك غير كافٍ!");
         return;
       }
 
       userData.balance -= amount;
-      userData.transfersSent = (userData.transfersSent || 0) + amount;
-      pushActivityLog(`💸 قام ${userData.name} بتحويل ${amount.toLocaleString()} نقطة إلى (${target})`);
+      pushActivityLog(`💸 حول ${userData.name} مبلغ ${amount.toLocaleString()} نقطة إلى (${target})`);
       saveData();
       alert(`✅ تم التحويل بنجاح إلى: ${target}`);
     }
@@ -542,24 +601,30 @@
         return;
       }
 
-      if (confirm(`تأكيد شراء ${itemName} بـ ${cost.toLocaleString()} نقطة؟`)) {
-        userData.balance -= cost;
-        let purchaseMsg = `🛒 شراء: ${itemName} | المستخدم: ${userData.name} (${userData.username}) | UID: [ ${userData.uid} ]`;
-        adminPurchaseLogs.unshift(`[${new Date().toLocaleTimeString('ar-IQ')}] ${purchaseMsg}`);
-        pushActivityLog(`🛍️ قام ${userData.name} بشراء ${itemName}`);
+      userData.balance -= cost;
+      pushActivityLog(`🛍️ اشترى ${userData.name} ${itemName}`);
+      saveData();
+      alert(`✅ تم طلب الشراء بنجاح عبر UID: (${userData.uid})`);
+    }
+
+    function completeTask(link, points) {
+      window.open(link, '_blank');
+      setTimeout(() => {
+        userData.balance += points;
+        pushActivityLog(`📢 أكمل ${userData.name} مهمة الاشتراك (+${points} نقطة)`);
         saveData();
-        alert(`✅ تم الشراء بنجاح! تم تسجيل الطلب بـ UID: (${userData.uid})`);
-      }
+        alert(`🎉 مبروك! تمت إضافة +${points} نقطة لحسابك.`);
+      }, 3000);
     }
 
     function copyUID() {
       navigator.clipboard.writeText(userData.uid.toString());
-      alert("📋 تم نسخ الـ UID الخاص بك بنجاح!");
+      alert("📋 تم نسخ الـ UID بنجاح!");
     }
 
     function copyRefLink() {
       navigator.clipboard.writeText(document.getElementById('ref-link-input').value);
-      alert("📋 تم نسخ رابط الإحالة الخاص بك!");
+      alert("📋 تم نسخ رابط الإحالة!");
     }
 
     function pushActivityLog(text) {
@@ -569,9 +634,8 @@
     }
 
     function saveData() {
-      localStorage.setItem('matrix_user_session_v2', JSON.stringify(userData));
+      localStorage.setItem('matrix_user_session_v3', JSON.stringify(userData));
       localStorage.setItem('matrix_global_logs', JSON.stringify(activityLogs));
-      localStorage.setItem('matrix_admin_logs', JSON.stringify(adminPurchaseLogs));
       renderUI();
     }
 
@@ -601,7 +665,7 @@
 
     function logout() {
       if (confirm("هل تريد تسجيل الخروج وإنشاء حساب جديد؟")) {
-        localStorage.removeItem('matrix_user_session_v2');
+        localStorage.removeItem('matrix_user_session_v3');
         location.reload();
       }
     }
