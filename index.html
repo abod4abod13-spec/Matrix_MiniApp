@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Matrix Mini App</title>
+  <!-- Telegram Web App SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- FontAwesome Icons & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --card-bg: rgba(23, 32, 54, 0.7);
+      --primary: #00f2fe;
+      --secondary: #4facfe;
+      --accent: #00ff88;
+      --text: #ffffff;
+      --text-muted: #8a99ad;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 80px;
+      overflow-x: hidden;
+    }
+
+    /* Header & Balance Card */
+    .header {
+      padding: 20px;
+      text-align: center;
+      background: radial-gradient(circle at top, rgba(0,242,254,0.15), transparent);
+    }
+
+    .balance-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(0, 242, 254, 0.2);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 20px;
+      margin: 10px 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,242,254,0.1);
+      position: relative;
+    }
+
+    .balance-title {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .balance-amount {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--primary);
+      text-shadow: 0 0 12px rgba(0, 242, 254, 0.5);
+      margin: 5px 0;
+    }
+
+    /* Grid Options */
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding: 0 20px;
+      margin-top: 15px;
+    }
+
+    .btn-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 15px;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-card:active {
+      transform: scale(0.96);
+      border-color: var(--primary);
+    }
+
+    .btn-card i {
+      font-size: 24px;
+      color: var(--primary);
+    }
+
+    .btn-card span {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Sections Container */
+    .section {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out forwards;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Bottom Navigation Bar */
+    .nav-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 65px;
+      background: rgba(11, 15, 25, 0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      gap: 4px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .nav-item i { font-size: 18px; }
+
+    .nav-item.active {
+      color: var(--primary);
+      text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+    }
+
+    /* Dynamic Button */
+    .claim-btn {
+      width: calc(100% - 40px);
+      margin: 20px;
+      padding: 15px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #000;
+      font-weight: 800;
+      font-size: 16px;
+      box-shadow: 0 4px 20px rgba(0, 242, 254, 0.4);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <h2>⚡ Matrix Mini App</h2>
+  </div>
+
+  <!-- Balance Card -->
+  <div class="balance-card">
+    <div class="balance-title">رصيدك الحالي</div>
+    <div class="balance-amount" id="balance">9,999,950 💎</div>
+    <div style="font-size: 12px; color: var(--accent);">
+      <i class="fa-solid fa-fire"></i> السلسلة اليومية: 3 أيام
+    </div>
+  </div>
+
+  <!-- SECTIONS -->
+  
+  <!-- Main Tab -->
+  <div id="tab-home" class="section active">
+    <button class="claim-btn" onclick="claimDaily()">
+      <i class="fa-solid fa-gift"></i> استلام الهدية اليومية
+    </button>
+
+    <div class="action-grid">
+      <div class="btn-card" onclick="switchTab('tasks')">
+        <i class="fa-solid fa-list-check"></i>
+        <span>المهام المتاحة</span>
+      </div>
+      <div class="btn-card" onclick="switchTab('boost')">
+        <i class="fa-solid fa-rocket"></i>
+        <span>تمويل قناة</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tasks Tab -->
+  <div id="tab-tasks" class="section">
+    <div style="padding: 20px; text-align: center; color: var(--text-muted);">
+      <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+      <p style="margin-top: 10px;">جاري تحميل القنوات والمهام...</p>
+    </div>
+  </div>
+
+  <!-- Boost Tab -->
+  <div id="tab-boost" class="section">
+    <div style="padding: 20px;">
+      <h3 style="margin-bottom: 15px;">إنشاء تمويل جديد</h3>
+      <input type="text" placeholder="رابط القناة (https://t.me/...)" style="width:100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: var(--card-bg); color:#fff; margin-bottom: 10px;">
+      <button class="claim-btn" style="width: 100%; margin: 0;">تأكيد التمويل</button>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav-bar">
+    <div class="nav-item active" onclick="switchTab('home', this)">
+      <i class="fa-solid fa-house"></i>
+      <span>الرئيسية</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('tasks', this)">
+      <i class="fa-solid fa-tasks"></i>
+      <span>المهام</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('boost', this)">
+      <i class="fa-solid fa-rocket"></i>
+      <span>التمويل</span>
+    </div>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // توسيع الشاشة بالكامل داخل التليجرام
+
+    function switchTab(tabName, el) {
+      if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+
+      if(el) {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+      }
+    }
+
+    function claimDaily() {
+      if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+      tg.showAlert("تهانينا! حصلت على +500 نقطة هدية يومية 🎁");
+    }
+  </script>
+</body>
+</html>
