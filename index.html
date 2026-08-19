@@ -3,170 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Matrix Mini App</title>
-  <!-- Telegram Web App SDK -->
+  <title>Matrix Mini App ⚡</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <!-- FontAwesome Icons & Google Fonts -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      --bg-color: #0b0f19;
-      --card-bg: rgba(23, 32, 54, 0.7);
+      --bg: #090d16;
+      --card-bg: rgba(18, 26, 43, 0.75);
       --primary: #00f2fe;
       --secondary: #4facfe;
       --accent: #00ff88;
+      --danger: #ff0055;
       --text: #ffffff;
-      --text-muted: #8a99ad;
+      --muted: #8a99ad;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Cairo', sans-serif;
-      user-select: none;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; user-select: none; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 90px; }
 
-    body {
-      background-color: var(--bg-color);
-      color: var(--text);
-      min-height: 100vh;
-      padding-bottom: 80px;
-      overflow-x: hidden;
-    }
-
-    /* Header & Balance Card */
-    .header {
-      padding: 20px;
-      text-align: center;
-      background: radial-gradient(circle at top, rgba(0,242,254,0.15), transparent);
-    }
-
-    .balance-card {
+    .glass-card {
       background: var(--card-bg);
       border: 1px solid rgba(0, 242, 254, 0.2);
       backdrop-filter: blur(12px);
       border-radius: 20px;
-      padding: 20px;
-      margin: 10px 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,242,254,0.1);
-      position: relative;
+      padding: 18px;
+      margin: 15px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     }
 
-    .balance-title {
-      color: var(--text-muted);
-      font-size: 14px;
-    }
+    .header { text-align: center; padding: 15px 0; }
+    .balance-val { font-size: 26px; font-weight: 900; color: var(--primary); text-shadow: 0 0 15px rgba(0,242,254,0.6); }
 
-    .balance-amount {
-      font-size: 32px;
-      font-weight: 800;
-      color: var(--primary);
-      text-shadow: 0 0 12px rgba(0, 242, 254, 0.5);
-      margin: 5px 0;
-    }
-
-    /* Grid Options */
-    .action-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      padding: 0 20px;
-      margin-top: 15px;
-    }
-
-    .btn-card {
+    .btn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 15px; }
+    .btn-action {
       background: var(--card-bg);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      padding: 15px;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 14px;
       border-radius: 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      cursor: pointer; transition: 0.2s;
+    }
+    .btn-action:active { transform: scale(0.95); border-color: var(--primary); }
+    .btn-action i { font-size: 22px; color: var(--primary); }
+
+    input, select {
+      width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.3); color: #fff; margin-top: 8px; outline: none;
     }
 
-    .btn-card:active {
-      transform: scale(0.96);
-      border-color: var(--primary);
-    }
-
-    .btn-card i {
-      font-size: 24px;
-      color: var(--primary);
-    }
-
-    .btn-card span {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    /* Sections Container */
-    .section {
-      display: none;
-      animation: fadeIn 0.3s ease-in-out forwards;
-    }
-
-    .section.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Bottom Navigation Bar */
-    .nav-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 65px;
-      background: rgba(11, 15, 25, 0.95);
-      backdrop-filter: blur(10px);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      z-index: 100;
-    }
-
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: var(--text-muted);
-      font-size: 12px;
-      gap: 4px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .nav-item i { font-size: 18px; }
-
-    .nav-item.active {
-      color: var(--primary);
-      text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
-    }
-
-    /* Dynamic Button */
-    .claim-btn {
-      width: calc(100% - 40px);
-      margin: 20px;
-      padding: 15px;
-      border: none;
-      border-radius: 14px;
+    .main-btn {
+      width: 100%; padding: 12px; border: none; border-radius: 14px;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: #000;
-      font-weight: 800;
-      font-size: 16px;
-      box-shadow: 0 4px 20px rgba(0, 242, 254, 0.4);
-      cursor: pointer;
+      color: #000; font-weight: 800; font-size: 15px; margin-top: 10px; cursor: pointer;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .nav-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; height: 70px;
+      background: rgba(9, 13, 22, 0.95); backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex; justify-content: space-around; align-items: center; z-index: 1000;
+    }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--muted); font-size: 11px; gap: 4px; cursor: pointer; }
+    .nav-item.active { color: var(--primary); font-weight: bold; }
+    
+    .channel-item {
+      margin-top: 10px; padding: 12px; background: rgba(0,0,0,0.2); 
+      border-radius: 12px; display: flex; justify-content: space-between; align-items: center;
+      border: 1px solid rgba(255,255,255,0.05);
     }
   </style>
 </head>
@@ -174,91 +83,227 @@
 
   <!-- Header -->
   <div class="header">
-    <h2>⚡ Matrix Mini App</h2>
+    <h2 id="site-title">⚡ Matrix التمويل</h2>
   </div>
 
-  <!-- Balance Card -->
-  <div class="balance-card">
-    <div class="balance-title">رصيدك الحالي</div>
-    <div class="balance-amount" id="balance">9,999,950 💎</div>
-    <div style="font-size: 12px; color: var(--accent);">
-      <i class="fa-solid fa-fire"></i> السلسلة اليومية: 3 أيام
+  <!-- Balance Box -->
+  <div class="glass-card" style="text-align: center;">
+    <span style="color: var(--muted); font-size: 13px;">رصيدك الحالي</span>
+    <div class="balance-val" id="user-balance">0 💎</div>
+    <div id="daily-status" style="font-size: 12px; color: var(--accent); margin-top: 5px;">
+      <i class="fa-solid fa-gift"></i> الهدية اليومية متاحة الان!
     </div>
   </div>
 
-  <!-- SECTIONS -->
-  
-  <!-- Main Tab -->
-  <div id="tab-home" class="section active">
-    <button class="claim-btn" onclick="claimDaily()">
-      <i class="fa-solid fa-gift"></i> استلام الهدية اليومية
-    </button>
+  <!-- TAB 1: HOME -->
+  <div id="tab-home" class="tab-content active">
+    <div class="btn-grid">
+      <div class="btn-action" onclick="claimDaily()"><i class="fa-solid fa-calendar-check" style="color:var(--accent);"></i><span>الهدية اليومية</span></div>
+      <div class="btn-action" onclick="switchTab('tasks')"><i class="fa-solid fa-list-check"></i><span>تجميع النقاط</span></div>
+      <div class="btn-action" onclick="switchTab('boost')"><i class="fa-solid fa-rocket"></i><span>تمويل جديد</span></div>
+      <div class="btn-action" onclick="switchTab('transfer')"><i class="fa-solid fa-arrow-right-arrow-left"></i><span>تحويل نقاط</span></div>
+    </div>
+  </div>
 
-    <div class="action-grid">
-      <div class="btn-card" onclick="switchTab('tasks')">
-        <i class="fa-solid fa-list-check"></i>
-        <span>المهام المتاحة</span>
+  <!-- TAB 2: TASKS (Channels) -->
+  <div id="tab-tasks" class="tab-content">
+    <div class="glass-card">
+      <h3><i class="fa-solid fa-tv"></i> قنوات التمويل المتاحة</h3>
+      <p style="color:var(--muted); font-size: 12px; margin-top:5px;">اشترك واضغط تحقق للحصول على النقاط:</p>
+      <div id="channels-list">
+        <!-- القنوات تظهر هنا ديناميكياً -->
       </div>
-      <div class="btn-card" onclick="switchTab('boost')">
-        <i class="fa-solid fa-rocket"></i>
-        <span>تمويل قناة</span>
+    </div>
+  </div>
+
+  <!-- TAB 3: BOOST -->
+  <div id="tab-boost" class="tab-content">
+    <div class="glass-card">
+      <h3>🚀 تمويل قناة جديدة</h3>
+      <label style="font-size: 12px; color:var(--muted);">رابط القناة أو المجموعة:</label>
+      <input type="text" placeholder="https://t.me/example">
+      <label style="font-size: 12px; color:var(--muted); margin-top: 10px; display:block;">عدد الأعضاء المطلوبة:</label>
+      <select>
+        <option>100 عضو (5,000 نقطة)</option>
+        <option>1,000 عضو (50,000 نقطة)</option>
+      </select>
+      <button class="main-btn" onclick="alert('تم تقديم طلب التمويل!')">تأكيد التمويل</button>
+    </div>
+  </div>
+
+  <!-- TAB 4: TRANSFER -->
+  <div id="tab-transfer" class="tab-content">
+    <div class="glass-card">
+      <h3>💸 تحويل النقاط</h3>
+      <input type="text" placeholder="المعرف (@username) أو الآيدي">
+      <input type="number" placeholder="عدد النقاط">
+      <button class="main-btn" onclick="alert('تم التحويل بنجاح!')">تحويل الآن</button>
+    </div>
+  </div>
+
+  <!-- TAB 5: CONTROL PANEL (DEV) -->
+  <div id="tab-dev" class="tab-content">
+    <div class="glass-card" style="border-color: var(--danger);">
+      <h3 style="color: var(--danger);"><i class="fa-solid fa-sliders"></i> لوحة التحكم الكاملة</h3>
+      
+      <div style="margin-top: 15px;">
+        <label style="font-size: 12px; color:var(--muted);">1. تعديل الرصيد الحالي:</label>
+        <input type="number" id="dev-set-balance" placeholder="أدخل الرصيد الجديد">
+        <button class="main-btn" style="background:var(--accent); color:#000;" onclick="updateBalance()">تحديث الرصيد</button>
+
+        <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
+
+        <label style="font-size: 12px; color:var(--muted);">2. قيمة الهدية اليومية:</label>
+        <input type="number" id="dev-daily-val" placeholder="قيمة الهدية بالنقاط">
+        <button class="main-btn" onclick="updateDailyValue()">حفظ قيمة الهدية</button>
+
+        <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
+
+        <label style="font-size: 12px; color:var(--muted);">3. إضافة قناة جديدة للتمويل:</label>
+        <input type="text" id="dev-chan-name" placeholder="اسم القناة">
+        <input type="text" id="dev-chan-link" placeholder="رابط القناة (https://t.me/...)">
+        <input type="number" id="dev-chan-reward" placeholder="مكافأة الاشتراك">
+        <button class="main-btn" style="background:var(--primary); color:#000;" onclick="addNewChannel()">إضافة القناة فوراً</button>
       </div>
     </div>
   </div>
 
-  <!-- Tasks Tab -->
-  <div id="tab-tasks" class="section">
-    <div style="padding: 20px; text-align: center; color: var(--text-muted);">
-      <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
-      <p style="margin-top: 10px;">جاري تحميل القنوات والمهام...</p>
-    </div>
-  </div>
-
-  <!-- Boost Tab -->
-  <div id="tab-boost" class="section">
-    <div style="padding: 20px;">
-      <h3 style="margin-bottom: 15px;">إنشاء تمويل جديد</h3>
-      <input type="text" placeholder="رابط القناة (https://t.me/...)" style="width:100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: var(--card-bg); color:#fff; margin-bottom: 10px;">
-      <button class="claim-btn" style="width: 100%; margin: 0;">تأكيد التمويل</button>
-    </div>
-  </div>
-
-  <!-- Navigation -->
+  <!-- Navigation Bar -->
   <div class="nav-bar">
-    <div class="nav-item active" onclick="switchTab('home', this)">
-      <i class="fa-solid fa-house"></i>
-      <span>الرئيسية</span>
-    </div>
-    <div class="nav-item" onclick="switchTab('tasks', this)">
-      <i class="fa-solid fa-tasks"></i>
-      <span>المهام</span>
-    </div>
-    <div class="nav-item" onclick="switchTab('boost', this)">
-      <i class="fa-solid fa-rocket"></i>
-      <span>التمويل</span>
-    </div>
+    <div class="nav-item active" onclick="switchTab('home', this)"><i class="fa-solid fa-house"></i><span>الرئيسية</span></div>
+    <div class="nav-item" onclick="switchTab('tasks', this)"><i class="fa-solid fa-tasks"></i><span>القنوات</span></div>
+    <div class="nav-item" onclick="switchTab('boost', this)"><i class="fa-solid fa-rocket"></i><span>التمويل</span></div>
+    <div class="nav-item" onclick="openDevPanel(this)"><i class="fa-solid fa-sliders"></i><span>اللوحة</span></div>
   </div>
 
   <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand(); // توسيع الشاشة بالكامل داخل التليجرام
+    const PASS_KEY = "Matrix_Dev_2026_Secure_Access_8877";
 
-    function switchTab(tabName, el) {
-      if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+    // البيانات المخزنة
+    let config = JSON.parse(localStorage.getItem('matrix_config')) || {
+      balance: 7979997999,
+      dailyReward: 500,
+      lastDaily: 0,
+      channels: [
+        { id: 1, name: "قناة الماتريكس الرسمية", link: "https://t.me/example", reward: 100 }
+      ]
+    };
 
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      document.getElementById(`tab-${tabName}`).classList.add('active');
+    function saveConfig() {
+      localStorage.setItem('matrix_config', JSON.stringify(config));
+      renderApp();
+    }
 
-      if(el) {
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    function renderApp() {
+      // تحديث الرصيد
+      document.getElementById('user-balance').innerText = config.balance.toLocaleString() + " 💎";
+      
+      // تحديث قائمة القنوات
+      const container = document.getElementById('channels-list');
+      container.innerHTML = "";
+      if(config.channels.length === 0) {
+        container.innerHTML = "<p style='color:var(--muted); font-size:12px; text-align:center;'>لا توجد قنوات حالياً</p>";
+      }
+      config.channels.forEach((ch, idx) => {
+        container.innerHTML += `
+          <div class="channel-item">
+            <div>
+              <strong>${ch.name}</strong>
+              <div style="font-size:11px; color:var(--accent);">+${ch.reward} نقطة</div>
+            </div>
+            <button class="main-btn" style="width:auto; padding:6px 12px; margin:0;" onclick="joinChannel('${ch.link}', ${ch.reward}, ${idx})">اشتراك</button>
+          </div>
+        `;
+      });
+
+      // حالة الهدية اليومية
+      const now = new Date().getTime();
+      if (now - config.lastDaily < 86400000) {
+        document.getElementById('daily-status').innerHTML = `<i class="fa-solid fa-clock"></i> تم أخذ الهدية اليومية (عد بعد 24 ساعة)`;
+        document.getElementById('daily-status').style.color = "var(--muted)";
+      } else {
+        document.getElementById('daily-status').innerHTML = `<i class="fa-solid fa-gift"></i> الهدية اليومية متاحة الان (+${config.dailyReward})`;
+        document.getElementById('daily-status').style.color = "var(--accent)";
+      }
+    }
+
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+      if (el) {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
       }
     }
 
-    function claimDaily() {
-      if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-      tg.showAlert("تهانينا! حصلت على +500 نقطة هدية يومية 🎁");
+    function openDevPanel(el) {
+      let pass = prompt("أدخل كلمة مرور لوحة التحكم:");
+      if (pass === PASS_KEY) {
+        switchTab('dev', el);
+      } else {
+        alert("❌ كلمة المرور غير صحيحة!");
+      }
     }
+
+    function claimDaily() {
+      const now = new Date().getTime();
+      if (now - config.lastDaily >= 86400000) {
+        config.balance += config.dailyReward;
+        config.lastDaily = now;
+        saveConfig();
+        alert(`🎉 مبروك! حصلت على ${config.dailyReward} نقطة هدية يومية.`);
+      } else {
+        alert("⚠️ لقد أخذت الهدية اليومية بالفعل، عد غداً!");
+      }
+    }
+
+    function joinChannel(link, reward, idx) {
+      window.open(link, '_blank');
+      setTimeout(() => {
+        if(confirm("هل اشتركت بالقناة للحصول على النقاط؟")) {
+          config.balance += reward;
+          config.channels.splice(idx, 1);
+          saveConfig();
+          alert(`✅ تم إضافة +${reward} نقطة لحسابك!`);
+        }
+      }, 1000);
+    }
+
+    // قرارات لوحة التحكم
+    function updateBalance() {
+      let val = parseInt(document.getElementById('dev-set-balance').value);
+      if(!isNaN(val)) {
+        config.balance = val;
+        saveConfig();
+        alert("تم تحديث الرصيد بنجاح!");
+      }
+    }
+
+    function updateDailyValue() {
+      let val = parseInt(document.getElementById('dev-daily-val').value);
+      if(!isNaN(val)) {
+        config.dailyReward = val;
+        saveConfig();
+        alert("تم تعديل قيمة الهدية اليومية!");
+      }
+    }
+
+    function addNewChannel() {
+      let name = document.getElementById('dev-chan-name').value;
+      let link = document.getElementById('dev-chan-link').value;
+      let reward = parseInt(document.getElementById('dev-chan-reward').value);
+
+      if(name && link && !isNaN(reward)) {
+        config.channels.push({ id: Date.now(), name, link, reward });
+        saveConfig();
+        alert("تمت إضافة القناة إلى القائمة فوراً!");
+      } else {
+        alert("يرجى ملء جميع الحقول بشكل صحيح!");
+      }
+    }
+
+    // تشغيل عند الفتح
+    renderApp();
   </script>
 </body>
 </html>
