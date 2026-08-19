@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Matrix Mini App ⚡</title>
+  <title>Matrix Platform & Mini App ⚡</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -24,41 +24,55 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; user-select: none; }
     body { background-color: var(--bg); color: var(--text); padding-bottom: 90px; }
 
+    /* Modal / Auth Screen */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px);
+      display: flex; justify-content: center; align-items: center; z-index: 9999; p-3;
+    }
+    .modal-card {
+      background: var(--card-bg); border: 1px solid var(--primary);
+      border-radius: 24px; padding: 25px; width: 90%; max-width: 420px; text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    }
+
     .glass-card {
-      background: var(--card-bg);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 18px;
-      margin: 15px;
+      background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px); border-radius: 20px; padding: 18px; margin: 12px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
-    .header { text-align: center; padding: 15px 0 5px 0; }
-    .uid-badge { background: rgba(79, 70, 229, 0.2); border: 1px solid var(--primary); color: var(--secondary); font-size: 12px; padding: 3px 10px; border-radius: 12px; display: inline-block; margin-bottom: 5px; }
+    .user-header { display: flex; align-items: center; justify-content: space-between; padding: 15px; }
+    .user-avatar { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--primary); object-fit: cover; }
+    .uid-badge { background: rgba(79, 70, 229, 0.2); border: 1px solid var(--primary); color: var(--secondary); font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+
     .balance-val { font-size: 26px; font-weight: 900; color: var(--accent); text-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
 
-    .btn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 15px; }
+    /* Activity Ticker / Notifications Scroll */
+    .activity-ticker {
+      background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px; padding: 10px; margin: 12px; max-height: 85px; overflow-y: auto;
+    }
+    .ticker-item { font-size: 11px; color: var(--secondary); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+
+    .btn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 12px; }
     .btn-action {
-      background: var(--card-bg);
-      border: 1px solid rgba(255,255,255,0.08);
-      padding: 14px;
-      border-radius: 16px;
-      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      background: var(--card-bg); border: 1px solid rgba(255,255,255,0.08);
+      padding: 12px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; gap: 6px;
       cursor: pointer; transition: 0.2s;
     }
     .btn-action:active { transform: scale(0.95); border-color: var(--primary); }
-    .btn-action i { font-size: 22px; color: var(--secondary); }
+    .btn-action i { font-size: 20px; color: var(--secondary); }
 
     input, select, textarea {
-      width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(0,0,0,0.3); color: #fff; margin-top: 8px; outline: none;
+      width: 100%; padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.3); color: #fff; margin-top: 6px; outline: none; font-size: 13px;
     }
 
     .main-btn {
       width: 100%; padding: 12px; border: none; border-radius: 14px;
       background: linear-gradient(135deg, var(--primary), #4338ca);
-      color: #fff; font-weight: 800; font-size: 15px; margin-top: 10px; cursor: pointer;
+      color: #fff; font-weight: 800; font-size: 14px; margin-top: 10px; cursor: pointer;
       box-shadow: 0 0 15px rgba(79, 70, 229, 0.4);
     }
 
@@ -67,48 +81,65 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
     .nav-bar {
-      position: fixed; bottom: 0; left: 0; right: 0; height: 70px;
+      position: fixed; bottom: 0; left: 0; right: 0; height: 65px;
       background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px);
-      border-top: 1px solid var(--primary);
-      display: flex; justify-content: space-around; align-items: center; z-index: 1000;
+      border-top: 1px solid var(--primary); display: flex; justify-content: space-around; align-items: center; z-index: 1000;
     }
-    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--muted); font-size: 11px; gap: 4px; cursor: pointer; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--muted); font-size: 10px; gap: 4px; cursor: pointer; }
     .nav-item.active { color: var(--secondary); font-weight: bold; }
 
     .store-item, .channel-item {
       background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px; padding: 15px; margin-top: 10px;
+      border-radius: 16px; padding: 12px; margin-top: 10px;
       display: flex; justify-content: space-between; align-items: center;
     }
 
-    .channel-info { display: flex; align-items: center; gap: 12px; }
-    .channel-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
-
-    .ad-card {
-      background: #334155; border-radius: 14px; padding: 15px;
-      border: 2px dashed var(--secondary); text-align: center; margin: 15px 0;
-    }
-
-    .banner-container {
-      margin: 10px 0; display: flex; justify-content: center; align-items: center;
-      min-height: 60px; background: rgba(0,0,0,0.2); border-radius: 8px;
-    }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-  <!-- Header Section -->
-  <div class="header">
-    <div class="uid-badge">مُعرّف الحساب (UID): <span id="user-uid">0000000</span></div>
-    <h2>⚡ منصة الماتريكس والتمويل</h2>
+  <!-- AUTH / REGISTER MODAL (Appears First Time Only) -->
+  <div id="auth-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <h2 style="color:var(--secondary); margin-bottom:5px;">🚀 إعداد الحساب</h2>
+      <p style="color:var(--muted); font-size:12px; margin-bottom:15px;">أدخل معلوماتك للبدء واستخدام المنصة بنجاح</p>
+      
+      <input type="text" id="reg-name" placeholder="الاسم الكامل">
+      <input type="text" id="reg-username" placeholder="يوزر التلغرام (مثال: @username)">
+      <input type="text" id="reg-avatar" placeholder="رابط صورتك (اختياري)">
+      
+      <button class="main-btn" onclick="registerUser()">حفظ والدخول للمنصة</button>
+    </div>
   </div>
 
-  <!-- Balance Container -->
+  <!-- HEADER & USER PROFILE -->
+  <div class="glass-card user-header">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <img id="head-avatar" class="user-avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+      <div>
+        <strong id="head-name" style="font-size:14px;">...</strong>
+        <div style="font-size:11px; color:var(--muted);" id="head-username">@username</div>
+        <div class="uid-badge">UID: <span id="user-uid">0000000</span></div>
+      </div>
+    </div>
+    <button style="background:transparent; border:1px solid var(--danger); color:var(--danger); border-radius:10px; padding:4px 8px; font-size:10px;" onclick="logout()">حساب جديد</button>
+  </div>
+
+  <!-- BALANCE DISPLAY -->
   <div class="glass-card" style="text-align: center;">
-    <span style="color: var(--muted); font-size: 13px;">رصيدك الحالي</span>
+    <span style="color: var(--muted); font-size: 12px;">رصيدك الحالي</span>
     <div class="balance-val" id="user-balance">0 💎</div>
-    <div id="daily-status" style="font-size: 12px; color: var(--warning); margin-top: 5px;">
-      <i class="fa-solid fa-gift"></i> الهدية اليومية متاحة الآن!
+    <div id="daily-status" style="font-size: 11px; color: var(--warning); margin-top: 4px;">
+      <i class="fa-solid fa-gift"></i> الهدية اليومية متاحة!
+    </div>
+  </div>
+
+  <!-- GENERAL LIVE ACTIVITY SCROLLABLE TICKER -->
+  <div class="activity-ticker">
+    <div style="font-size:10px; color:var(--warning); font-weight:bold; margin-bottom:4px;"><i class="fa-solid fa-bell"></i> سجل الأنشطة والإشعارات العامة:</div>
+    <div id="live-ticker-logs">
+      <!-- Live User Actions Scroll Here -->
     </div>
   </div>
 
@@ -118,144 +149,139 @@
       <div class="btn-action" onclick="claimDaily()"><i class="fa-solid fa-calendar-check" style="color:var(--warning);"></i><span>الهدية اليومية</span></div>
       <div class="btn-action" onclick="switchTab('funding')"><i class="fa-solid fa-bullhorn" style="color:#38bdf8;"></i><span>التمويل والرعاية</span></div>
       <div class="btn-action" onclick="switchTab('ads')"><i class="fa-solid fa-rectangle-ad" style="color:var(--accent);"></i><span>مشاهدة إعلانات</span></div>
-      <div class="btn-action" onclick="switchTab('store')"><i class="fa-solid fa-store" style="color:#f43f5e;"></i><span>متجر الكروت</span></div>
+      <div class="btn-action" onclick="switchTab('store')"><i class="fa-solid fa-store" style="color:#f43f5e;"></i><span>متجر الكروت والنجوم</span></div>
       <div class="btn-action" onclick="switchTab('transfer')"><i class="fa-solid fa-arrow-right-arrow-left"></i><span>تحويل نقاط</span></div>
       <div class="btn-action" onclick="switchTab('tasks')"><i class="fa-solid fa-list-check" style="color:#a855f7;"></i><span>الاشتراك بالقنوات</span></div>
     </div>
   </div>
 
-  <!-- TAB 2: FUNDING / PROMOTION -->
+  <!-- TAB 2: FUNDING -->
   <div id="tab-funding" class="tab-content">
     <div class="glass-card">
       <h3>🚀 تمويل وترقية القنوات</h3>
-      <p style="color: var(--muted); font-size: 11px;">احصل على أعضاء حقيقيين بخصم مباشر من نقاطك!</p>
-      
-      <label style="font-size: 12px; color:var(--muted); margin-top:10px; display:block;">عنوان القناة:</label>
-      <input type="text" id="fund-title" placeholder="مثال: قناة الماتريكس التقنية">
-
-      <label style="font-size: 12px; color:var(--muted); margin-top:8px; display:block;">رابط القناة (أو المعرف):</label>
-      <input type="text" id="fund-link" placeholder="https://t.me/your_channel">
-
-      <label style="font-size: 12px; color:var(--muted); margin-top:8px; display:block;">رابط الصورة الشخصية للقناة:</label>
-      <input type="text" id="fund-img" placeholder="https://i.imgur.com/example.png">
-
-      <label style="font-size: 12px; color:var(--muted); margin-top:8px; display:block;">وصف القناة:</label>
+      <input type="text" id="fund-title" placeholder="عنوان القناة">
+      <input type="text" id="fund-link" placeholder="رابط القناة (https://t.me/...)">
+      <input type="text" id="fund-img" placeholder="رابط الصورة الشخصية (اختياري)">
       <textarea id="fund-desc" rows="2" placeholder="وصف قصير للقناة..."></textarea>
-
-      <label style="font-size: 12px; color:var(--muted); margin-top:8px; display:block;">عدد الأعضاء المطلوبين:</label>
+      
+      <label style="font-size:11px; color:var(--muted); margin-top:6px; display:block;">عدد الأعضاء المطلوبين:</label>
       <select id="fund-count" onchange="updateFundCost()">
         <option value="100">100 عضو (5,000 نقطة)</option>
         <option value="500">500 عضو (25,000 نقطة)</option>
         <option value="1000">1,000 عضو (50,000 نقطة)</option>
         <option value="5000">5,000 عضو (250,000 نقطة)</option>
-        <option value="10000">10,000 عضو (500,000 نقطة)</option>
       </select>
-
-      <label style="font-size: 12px; color:var(--muted); margin-top:8px; display:block;">مكافأة العضو لكل انضمام (الحد الأدنى 200 نقطة):</label>
-      <input type="number" id="fund-reward" value="200" min="200" placeholder="200">
-
-      <div style="margin-top: 15px; font-weight: bold; color: var(--accent); text-align: center;" id="fund-total-cost">
-        التكلفة الإجمالية: 5,000 نقطة
-      </div>
-
+      
+      <label style="font-size:11px; color:var(--muted); margin-top:6px; display:block;">مكافأة العضو (الحد الأدنى 200 نقطة):</label>
+      <input type="number" id="fund-reward" value="200" min="200">
+      
       <button class="main-btn" onclick="submitChannelFunding()">تأكيد وخصم النقاط لتمويل القناة</button>
     </div>
   </div>
 
-  <!-- TAB 3: TASKS / CHANNELS (Earn Points) -->
+  <!-- TAB 3: CHANNELS TASKS -->
   <div id="tab-tasks" class="tab-content">
     <div class="glass-card">
       <h3>📢 اشترك بالقنوات واكسب نقاط</h3>
-      <p style="color:var(--muted); font-size:11px;">قم بالانضمام للقنوات أدناه ثم اضغط "تحقق" للتحقق عبر نظام تلغرام تلقائياً!</p>
-      
-      <div id="channels-list">
-        <!-- Promoted Channels Inject Here Dynamically -->
-      </div>
+      <div id="channels-list"></div>
     </div>
   </div>
 
-  <!-- TAB 4: ADS (Adsterra Integration) -->
+  <!-- TAB 4: ADS -->
   <div id="tab-ads" class="tab-content">
-    <div class="glass-card">
-      <h3>🚀 شاهد الإعلانات واكسب النقاط</h3>
-      <p style="color: var(--muted); font-size: 12px; margin-top: 4px;">المكافأة الحالية: <strong style="color:var(--accent);" id="ad-reward-rate">100 نقطة</strong> لكل إعلان</p>
+    <div class="glass-card" style="text-align: center;">
+      <h3>🚀 مشاهدة الإعلانات</h3>
+      <p style="color:var(--muted); font-size:12px;">المكافأة الحالية: <strong style="color:var(--accent);" id="ad-reward-rate">100 نقطة</strong> لكل إعلان</p>
       
-      <div class="banner-container" id="adsterra-banner-slot"></div>
+      <div id="adsterra-banner-slot" style="margin:10px 0;"></div>
 
-      <div class="ad-card">
-        <div style="color:var(--warning); font-weight:800; font-size:14px; margin-bottom:10px;" id="ad-guide">اضغط لفتح الإعلان ثم انتظر 20 ثانية</div>
+      <div style="background:#334155; padding:15px; border-radius:14px; border:2px dashed var(--secondary);">
         <button id="ad-btn" class="main-btn" onclick="triggerAd()">فتح الإعلان الآن 🚀</button>
-        <div style="margin-top: 10px; font-size: 12px; color: var(--muted);" id="ad-timer">في انتظار فتح الإعلان...</div>
-      </div>
-
-      <div style="font-size: 13px; font-weight: bold; color: var(--secondary); text-align: center;" id="ad-progress">
-        إجمالي الإعلانات المشاهدة: 0
+        <div style="margin-top: 8px; font-size: 11px; color: var(--muted);" id="ad-timer">في انتظار الفتح...</div>
       </div>
     </div>
   </div>
 
-  <!-- TAB 5: STORE -->
+  <!-- TAB 5: STORE (Asia Cards + Telegram Stars) -->
   <div id="tab-store" class="tab-content">
     <div class="glass-card">
-      <h3>🛒 متجر كروت آسيا سيل</h3>
-      <p style="color:var(--muted); font-size:11px;">الشراء فورياً، ويتم التسليم عبر المطورين (@rasf10 / @io6p6)</p>
+      <h3>🛒 متجر آسيا سيل ونجوم تلغرام</h3>
+      <p style="color:var(--muted); font-size:11px;">التسليم يدوي وفوري بواسطة المطورين (@rasf10 / @io6p6)</p>
       
+      <!-- Telegram Stars Products -->
+      <div class="store-item" style="border-color:var(--warning);">
+        <div>
+          <strong>🌟 1 نجمة تلغرام (Telegram Star)</strong>
+          <div style="color:var(--accent); font-size:12px; font-weight:bold;">50,000 نقطة</div>
+        </div>
+        <button class="main-btn" style="width:auto; padding:6px 12px; margin:0; background:var(--warning); color:#000;" onclick="buyItem('1 نجمة تلغرام 🌟', 50000)">شراء</button>
+      </div>
+
+      <div class="store-item" style="border-color:var(--warning);">
+        <div>
+          <strong>🌟 5 نجمات تلغرام (Telegram Stars)</strong>
+          <div style="color:var(--accent); font-size:12px; font-weight:bold;">200,000 نقطة</div>
+        </div>
+        <button class="main-btn" style="width:auto; padding:6px 12px; margin:0; background:var(--warning); color:#000;" onclick="buyItem('5 نجمات تلغرام 🌟', 200000)">شراء</button>
+      </div>
+
+      <!-- Asia Cards -->
       <div class="store-item">
         <div>
-          <strong>كارت آسيا 5,000 د.ع</strong>
+          <strong>💳 كارت آسيا 5,000 د.ع</strong>
           <div style="color:var(--accent); font-size:12px; font-weight:bold;">500,000 نقطة</div>
         </div>
-        <button class="main-btn" style="width:auto; padding:8px 16px; margin:0;" onclick="buyCard('كارت آسيا 5,000', 500000)">شراء</button>
+        <button class="main-btn" style="width:auto; padding:6px 12px; margin:0;" onclick="buyItem('كارت آسيا 5,000', 500000)">شراء</button>
       </div>
 
       <div class="store-item">
         <div>
-          <strong>كارت آسيا 10,000 د.ع</strong>
+          <strong>💳 كارت آسيا 10,000 د.ع</strong>
           <div style="color:var(--accent); font-size:12px; font-weight:bold;">1,000,000 نقطة</div>
         </div>
-        <button class="main-btn" style="width:auto; padding:8px 16px; margin:0;" onclick="buyCard('كارت آسيا 10,000', 1000000)">شراء</button>
+        <button class="main-btn" style="width:auto; padding:6px 12px; margin:0;" onclick="buyItem('كارت آسيا 10,000', 1000000)">شراء</button>
       </div>
     </div>
   </div>
 
-  <!-- TAB 6: TRANSFER -->
+  <!-- TAB 6: TRANSFER VIA UID OR USERNAME -->
   <div id="tab-transfer" class="tab-content">
     <div class="glass-card">
       <h3>💸 تحويل نقاط حقيقي</h3>
-      <label style="font-size: 12px; color:var(--muted);">أدخل UID الشخص المستلم:</label>
-      <input type="number" id="tr-target-uid" placeholder="مثال: 8784840">
+      <label style="font-size: 11px; color:var(--muted);">أدخل UID أو يوزر المستلم (@username):</label>
+      <input type="text" id="tr-target" placeholder="مثال: 8784840 أو @rasf10">
       
-      <label style="font-size: 12px; color:var(--muted); margin-top: 8px; display:block;">عدد النقاط المراد تحويلها:</label>
+      <label style="font-size: 11px; color:var(--muted); margin-top: 8px; display:block;">النقاط المراد تحويلها:</label>
       <input type="number" id="tr-amount" placeholder="الحد الأدنى 1,000 نقطة">
       
-      <button class="main-btn" onclick="executeTransfer()">تأكيد تحويل النقاط</button>
+      <button class="main-btn" onclick="executeTransfer()">تأكيد التحويل الآن</button>
     </div>
   </div>
 
-  <!-- TAB 7: ADMIN / DEV PANEL -->
+  <!-- TAB 7: ADMIN CONTROL PANEL -->
   <div id="tab-dev" class="tab-content">
     <div class="glass-card" style="border-color: var(--danger);">
-      <h3 style="color: var(--danger);"><i class="fa-solid fa-sliders"></i> لوحة تحكم المطورين</h3>
+      <h3 style="color: var(--danger);"><i class="fa-solid fa-sliders"></i> لوحة تحكم المطورين المتقدمة</h3>
       
-      <div style="margin-top: 15px;">
-        <h4 style="color:var(--warning);">🛒 الطلبات والإشعارات الواردة:</h4>
-        <div id="admin-notifications" style="max-height: 120px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 10px; font-size: 11px; margin-top: 5px; color: #fff;">
+      <div style="margin-top: 10px;">
+        <h4 style="color:var(--warning); font-size:12px;">🛒 الطلبات والمشتريات الحية المباشرة:</h4>
+        <div id="admin-notifications" style="max-height: 120px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 10px; font-size: 11px; margin-top: 5px; color: #fff;">
           لا توجد مشتريات جديدة حالياً.
         </div>
       </div>
 
-      <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
+      <hr style="border-color: rgba(255,255,255,0.1); margin: 12px 0;">
 
       <div>
-        <label style="font-size: 12px; color:var(--muted);">تعديل نقاط مستخدم برقم UID:</label>
-        <input type="number" id="dev-target-uid" placeholder="أدخل UID المستخدم">
+        <label style="font-size: 11px; color:var(--muted);">تعديل رصيد أي مستخدم (UID أو يوزر):</label>
+        <input type="text" id="dev-target" placeholder="أدخل UID أو اليوزر">
         <input type="number" id="dev-set-balance" placeholder="النقاط الجديدة">
         <button class="main-btn" style="background:var(--accent); color:#000;" onclick="adminSetBalance()">تحديث النقاط فوراً</button>
       </div>
     </div>
   </div>
 
-  <!-- Bottom Navigation Bar -->
+  <!-- NAV BAR -->
   <div class="nav-bar">
     <div class="nav-item active" onclick="switchTab('home', this)"><i class="fa-solid fa-house"></i><span>الرئيسية</span></div>
     <div class="nav-item" onclick="switchTab('funding', this)"><i class="fa-solid fa-bullhorn"></i><span>التمويل</span></div>
@@ -270,59 +296,86 @@
     if (tg) tg.expand();
 
     const PASS_KEY = "Matrix_Dev_2026_Secure_Access_8877";
-    const adSmartLink = "https://www.effectivecpmnetwork.com/v211a62503?key=e4a8339043403ab9de463236f63f9f52";
+    const BOT_TOKEN = "7891011:AAExampleTokenHereForTelegramBot"; // توكن البوت لإرسال إشعارات المشتريات للخاص
+    const DEV_CHAT_IDS = ["123456789"]; // إيدي حساب المطورين ليصلهم إشعار فوري في الخاص
 
-    // Telegram Bot Token (استبدله بتوكن البوت الخاص بك ليعمل الفحص الحقيقي عبر API تلغرام)
-    const BOT_TOKEN = "YOUR_BOT_TOKEN_HERE";
+    // Database Engine
+    let userData = JSON.parse(localStorage.getItem('matrix_user_session'));
+    let isAdminLoggedIn = localStorage.getItem('matrix_admin_authed') === 'true';
+    let activityLogs = JSON.parse(localStorage.getItem('matrix_global_logs')) || [];
+    let adminPurchaseLogs = JSON.parse(localStorage.getItem('matrix_admin_logs')) || [];
 
-    // User Data Engine
-    let userData = JSON.parse(localStorage.getItem('matrix_user_db')) || {
-      uid: tg?.initDataUnsafe?.user?.id || Math.floor(1000000 + Math.random() * 9000000),
-      balance: 0,
-      lastDaily: 0,
-      adsWatched: 0,
-      joinedChannels: []
-    };
-
-    // System Logs & Promoted Channels Store
-    let adminLogs = JSON.parse(localStorage.getItem('matrix_admin_logs')) || [];
-    let promotedChannels = JSON.parse(localStorage.getItem('matrix_promoted_channels')) || [
-      {
-        id: 1,
-        title: "قناة الماتريكس الرسمية",
-        link: "https://t.me/rasf10",
-        img: "https://cdn-icons-png.flaticon.com/512/2111/2111646.png",
-        desc: "اشترك للحصول على آخر التحديثات والبرمجيات",
-        reward: 200,
-        targetChannelUsername: "rasf10"
+    // Check Auth Status on Load
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!userData) {
+        document.getElementById('auth-modal').classList.remove('hidden');
+      } else {
+        renderUI();
       }
-    ];
+    });
 
-    function saveData() {
-      localStorage.setItem('matrix_user_db', JSON.stringify(userData));
-      localStorage.setItem('matrix_promoted_channels', JSON.stringify(promotedChannels));
+    function registerUser() {
+      const name = document.getElementById('reg-name').value.trim();
+      let username = document.getElementById('reg-username').value.trim();
+      let avatar = document.getElementById('reg-avatar').value.trim();
+
+      if (!name || !username) {
+        alert("يرجى كتابة الاسم ويوزر التلغرام!");
+        return;
+      }
+
+      if (!username.startsWith('@')) username = '@' + username;
+      if (!avatar) avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0D8ABC&color=fff`;
+
+      userData = {
+        uid: Math.floor(1000000 + Math.random() * 9000000),
+        name: name,
+        username: username,
+        avatar: avatar,
+        balance: 0,
+        lastDaily: 0,
+        adsWatched: 0,
+        joinedChannels: []
+      };
+
+      localStorage.setItem('matrix_user_session', JSON.stringify(userData));
+      document.getElementById('auth-modal').classList.add('hidden');
+      pushActivityLog(`🎉 انضم مستخدم جديد للمنصة: ${userData.name} (${userData.username})`);
       renderUI();
     }
 
+    function logout() {
+      if (confirm("هل تريد تسجيل الخروج وإنشاء/دخول بحساب آخر؟")) {
+        localStorage.removeItem('matrix_user_session');
+        location.reload();
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem('matrix_user_session', JSON.stringify(userData));
+      localStorage.setItem('matrix_global_logs', JSON.stringify(activityLogs));
+      localStorage.setItem('matrix_admin_logs', JSON.stringify(adminPurchaseLogs));
+      renderUI();
+    }
+
+    function pushActivityLog(text) {
+      activityLogs.unshift(`[${new Date().toLocaleTimeString('ar-IQ')}] ${text}`);
+      if (activityLogs.length > 30) activityLogs.pop();
+      saveData();
+    }
+
     function renderUI() {
+      if (!userData) return;
+
+      document.getElementById('head-name').innerText = userData.name;
+      document.getElementById('head-username').innerText = userData.username;
+      document.getElementById('head-avatar').src = userData.avatar;
       document.getElementById('user-uid').innerText = userData.uid;
       document.getElementById('user-balance').innerText = userData.balance.toLocaleString() + " 💎";
-      document.getElementById('ad-progress').innerText = `إجمالي الإعلانات المشاهدة: ${userData.adsWatched}`;
-      
-      let currentRate = 100 + (Math.floor(userData.adsWatched / 20) * 100);
-      if (currentRate > 1000) currentRate = 1000;
-      document.getElementById('ad-reward-rate').innerText = `${currentRate} نقطة`;
 
-      const now = new Date().getTime();
-      if (now - userData.lastDaily < 86400000) {
-        document.getElementById('daily-status').innerHTML = `<i class="fa-solid fa-clock"></i> الهدية اليومية أُخذت بالفعل (عد غداً)`;
-        document.getElementById('daily-status').style.color = "var(--muted)";
-      } else {
-        document.getElementById('daily-status').innerHTML = `<i class="fa-solid fa-gift"></i> الهدية اليومية متاحة الآن!`;
-        document.getElementById('daily-status').style.color = "var(--warning)";
-      }
-
-      renderChannelsList();
+      // Render Activity Ticker Log
+      const logContainer = document.getElementById('live-ticker-logs');
+      logContainer.innerHTML = activityLogs.map(l => `<div class="ticker-item"><i class="fa-solid fa-chevron-left" style="font-size:8px;"></i> ${l}</div>`).join('');
     }
 
     function switchTab(tabId, el) {
@@ -333,139 +386,6 @@
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
       }
-
-      const adSlot = document.getElementById('adsterra-banner-slot');
-      if (tabId === 'ads') {
-        adSlot.innerHTML = `<iframe src="about:blank" id="ad-frame" style="width:100%; height:60px; border:none; scrolling:no;"></iframe>`;
-        let frameDoc = document.getElementById('ad-frame').contentWindow.document;
-        frameDoc.open();
-        frameDoc.write(`
-          <body style="margin:0; padding:0; display:flex; justify-content:center; align-items:center;">
-            <script type="text/javascript">
-              atOptions = {
-                'key' : '19caa55cbb03df3ad1f2030dd6449b8f',
-                'format' : 'iframe',
-                'height' : 60,
-                'width' : 468,
-                'params' : {}
-              };
-            <\/script>
-            <script type="text/javascript" src="https://www.highperformanceformat.com/19caa55cbb03df3ad1f2030dd6449b8f/invoke.js"><\/script>
-          </body>
-        `);
-        frameDoc.close();
-      } else {
-        adSlot.innerHTML = "";
-      }
-    }
-
-    function updateFundCost() {
-      const count = parseInt(document.getElementById('fund-count').value);
-      const totalCost = count * 50; 
-      document.getElementById('fund-total-cost').innerText = `التكلفة الإجمالية: ${totalCost.toLocaleString()} نقطة`;
-    }
-
-    function submitChannelFunding() {
-      const title = document.getElementById('fund-title').value.trim();
-      const link = document.getElementById('fund-link').value.trim();
-      const img = document.getElementById('fund-img').value.trim() || "https://cdn-icons-png.flaticon.com/512/2111/2111646.png";
-      const desc = document.getElementById('fund-desc').value.trim();
-      const count = parseInt(document.getElementById('fund-count').value);
-      let reward = parseInt(document.getElementById('fund-reward').value);
-
-      if (reward < 200) reward = 200; // Force Minimum 200 reward
-
-      const totalCost = count * 50;
-
-      if (!title || !link) {
-        alert("يرجى ملء عنوان ورابط القناة بشكل صحيح!");
-        return;
-      }
-
-      if (userData.balance < totalCost) {
-        alert(`❌ رصيدك غير كافٍ! تحتاج إلى ${totalCost.toLocaleString()} نقطة لتمويل هذا العدد.`);
-        return;
-      }
-
-      let username = link.split('t.me/')[1]?.replace('/', '') || link;
-
-      userData.balance -= totalCost;
-      promotedChannels.push({
-        id: Date.now(),
-        title: title,
-        link: link,
-        img: img,
-        desc: desc,
-        reward: reward,
-        targetChannelUsername: username
-      });
-
-      saveData();
-      alert(`✅ تم إدراج قناتك للتمويل بنجاح وسحب ${totalCost.toLocaleString()} نقطة!`);
-      switchTab('tasks');
-    }
-
-    function renderChannelsList() {
-      const listContainer = document.getElementById('channels-list');
-      listContainer.innerHTML = "";
-
-      promotedChannels.forEach(ch => {
-        const isJoined = userData.joinedChannels.includes(ch.id);
-        
-        listContainer.innerHTML += `
-          <div class="channel-item">
-            <div class="channel-info">
-              <img src="${ch.img}" class="channel-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2111/2111646.png'">
-              <div>
-                <strong>${ch.title}</strong>
-                <div style="font-size:11px; color:var(--muted);">${ch.desc || 'اشترك واكسب النقاط'}</div>
-                <div style="font-size:12px; color:var(--accent); font-weight:bold;">+${ch.reward} نقطة</div>
-              </div>
-            </div>
-            <div>
-              ${isJoined ? 
-                `<span style="color:var(--accent); font-size:12px; font-weight:bold;">✅ تم الاشتراك</span>` : 
-                `<button class="main-btn" style="width:auto; padding:6px 12px; margin:0;" onclick="verifyChannelJoin(${ch.id}, '${ch.link}', '${ch.targetChannelUsername}', ${ch.reward})">انضمام وتحقق</button>`
-              }
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    // Real Telegram Membership Verification System
-    async function verifyChannelJoin(chId, link, username, reward) {
-      window.open(link, '_blank');
-
-      setTimeout(async () => {
-        if (confirm("هل قمت بالانضمام بالفعل للقناة؟ اضغط 'موافق' للتحقق الآن.")) {
-          let verified = true; // Fallback verification mode
-
-          // Direct API Verification with Telegram Bot
-          if (BOT_TOKEN !== "YOUR_BOT_TOKEN_HERE" && userData.uid) {
-            try {
-              let res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=@${username}&user_id=${userData.uid}`);
-              let data = await res.json();
-              if (data.ok && ['member', 'administrator', 'creator'].includes(data.result.status)) {
-                verified = true;
-              } else {
-                verified = false;
-              }
-            } catch (e) {
-              verified = true; // Safety pass if CORS blocks API
-            }
-          }
-
-          if (verified) {
-            userData.balance += reward;
-            userData.joinedChannels.push(chId);
-            saveData();
-            alert(`🎉 تم التأكد من الانضمام بنجاح! كسبت +${reward} نقطة.`);
-          } else {
-            alert("❌ لم يتم العثور على حسابك داخل القناة! التأكد من الانضمام ثم حاول مجدداً.");
-          }
-        }
-      }, 2000);
     }
 
     function claimDaily() {
@@ -473,129 +393,120 @@
       if (now - userData.lastDaily >= 86400000) {
         userData.balance += 500;
         userData.lastDaily = now;
+        pushActivityLog(`✨ حصل ${userData.name} على الهدية اليومية (+500 نقطة)`);
         saveData();
-        alert("🎉 تهانينا! حصلت على 500 نقطة كهدية يومية.");
+        alert("🎉 مبروك! حصلت على 500 نقطة كهدية يومية.");
       } else {
-        alert("⚠️ أخذت الهدية اليومية بالفعل، يرجى العودة بعد 24 ساعة.");
+        alert("⚠️ أخذت الهدية اليومية بالفعل، حاول مجدداً غداً.");
       }
     }
 
-    let isAdActive = false;
-    let adTimerInterval;
-
-    function triggerAd() {
-      window.open(adSmartLink, '_blank');
-      isAdActive = true;
-      let timeLeft = 20;
-      
-      const btn = document.getElementById('ad-btn');
-      const timerTxt = document.getElementById('ad-timer');
-      btn.disabled = true;
-
-      adTimerInterval = setInterval(() => {
-        timeLeft--;
-        timerTxt.innerText = `⏳ جاري التحقق من مشاهدة الإعلان: باقي ${timeLeft} ثانية...`;
-        
-        if (timeLeft <= 0) {
-          clearInterval(adTimerInterval);
-          if (isAdActive) {
-            let reward = 100 + (Math.floor(userData.adsWatched / 20) * 100);
-            if (reward > 1000) reward = 1000;
-
-            userData.balance += reward;
-            userData.adsWatched += 1;
-            saveData();
-
-            timerTxt.innerText = `✅ تم التأكد بنجاح! كسبت +${reward} نقطة.`;
-            timerTxt.style.color = "var(--accent)";
-            btn.disabled = false;
-            isAdActive = false;
-          }
-        }
-      }, 1000);
-    }
-
-    function buyCard(cardName, cost) {
+    function buyItem(itemName, cost) {
       if (userData.balance < cost) {
-        alert(`❌ رصيدك غير كافٍ! تحتاج إلى ${cost.toLocaleString()} نقطة.`);
+        alert(`❌ رصيدك لا يكفي! تحتاج ${cost.toLocaleString()} نقطة.`);
         return;
       }
 
-      if (confirm(`هل أنت تأكد من شراء ${cardName} مقابل ${cost.toLocaleString()} نقطة؟`)) {
+      if (confirm(`تأكيد شراء ${itemName} بـ ${cost.toLocaleString()} نقطة؟`)) {
         userData.balance -= cost;
+        
+        let purchaseMsg = `🛒 شراء: ${itemName} | المستخدم: ${userData.name} (${userData.username}) | UID: [ ${userData.uid} ]`;
+        adminPurchaseLogs.unshift(`[${new Date().toLocaleTimeString('ar-IQ')}] ${purchaseMsg}`);
+        pushActivityLog(`🛍️ قام ${userData.name} بشراء ${itemName}`);
         saveData();
 
-        let newLog = `🛒 طلب شراء: ${cardName} | من UID: [ ${userData.uid} ] | التاريخ: ${new Date().toLocaleTimeString('ar-IQ')}`;
-        adminLogs.unshift(newLog);
-        localStorage.setItem('matrix_admin_logs', JSON.stringify(adminLogs));
+        // Send Direct Alert To Dev Telegram Bot
+        sendTelegramDevAlert(purchaseMsg);
 
-        alert(`✅ تم الشراء بنجاح! تم إرسال الطلب وحجز الكارت برقم الـ UID الخاص بك (${userData.uid}). تواصل مع المطورين لتسلمه: @rasf10 أو @io6p6`);
+        alert(`✅ تم الشراء بنجاح! تم تسجيل الطلب بـ UID: (${userData.uid})، تواصل مع المطور لتسلمه: @rasf10 أو @io6p6`);
       }
     }
 
     function executeTransfer() {
-      let targetUID = document.getElementById('tr-target-uid').value;
+      let target = document.getElementById('tr-target').value.trim();
       let amount = parseInt(document.getElementById('tr-amount').value);
 
-      if (!targetUID || isNaN(amount) || amount < 1000) {
-        alert("يرجى إدخال UID صحيح وكمية نقاط لا تقل عن 1,000 نقطة.");
+      if (!target || isNaN(amount) || amount < 1000) {
+        alert("أدخل UID أو يوزر صحيح، وكمية لا تقل عن 1,000 نقطة!");
         return;
       }
 
-      if (targetUID == userData.uid) {
-        alert("لا يمكنك تحويل النقاط لنفس الحساب!");
+      if (target === userData.uid.toString() || target === userData.username) {
+        alert("لا يمكنك التحويل لنفسك!");
         return;
       }
 
       if (userData.balance < amount) {
-        alert("رصيدك الحالي لا يكفي لإتمام هذه العملية!");
+        alert("رصيدك الحالي غير كافٍ!");
         return;
       }
 
       userData.balance -= amount;
+      pushActivityLog(`💸 قام ${userData.name} بتحويل ${amount.toLocaleString()} نقطة إلى (${target})`);
       saveData();
-      alert(`✅ تم تحويل ${amount.toLocaleString()} نقطة بنجاح إلى الحساب صاحب الـ UID: ${targetUID}`);
+
+      alert(`✅ تم تحويل ${amount.toLocaleString()} نقطة بنجاح إلى المستلم: ${target}`);
     }
 
+    // Direct Telegram Bot Alert API
+    function sendTelegramDevAlert(message) {
+      DEV_CHAT_IDS.forEach(chatId => {
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: `🚨 [إشعار مشتريات جديد]\n${message}`
+          })
+        }).catch(() => {});
+      });
+    }
+
+    // Remembered Developer Login
     function openDevPanel(el) {
-      let pass = prompt("أدخل رمز دخول لوحة التحكم الخاص:");
+      if (isAdminLoggedIn) {
+        switchTab('dev', el);
+        renderAdminLogs();
+        return;
+      }
+
+      let pass = prompt("أدخل رمز دخول لوحة التحكم الخاص بالمطورين:");
       if (pass === PASS_KEY) {
+        localStorage.setItem('matrix_admin_authed', 'true');
+        isAdminLoggedIn = true;
         switchTab('dev', el);
         renderAdminLogs();
       } else {
-        alert("❌ رمز الدخول غير صحيح!");
+        alert("❌ كلمة السر غير صحيحة!");
       }
     }
 
     function renderAdminLogs() {
       const container = document.getElementById('admin-notifications');
-      if (adminLogs.length === 0) {
+      if (adminPurchaseLogs.length === 0) {
         container.innerHTML = "لا توجد مشتريات جديدة حالياً.";
       } else {
-        container.innerHTML = adminLogs.map(log => `<div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);">${log}</div>`).join('');
+        container.innerHTML = adminPurchaseLogs.map(l => `<div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);">${l}</div>`).join('');
       }
     }
 
     function adminSetBalance() {
-      let tUID = document.getElementById('dev-target-uid').value;
+      let target = document.getElementById('dev-target').value.trim();
       let newBal = parseInt(document.getElementById('dev-set-balance').value);
 
-      if (!tUID || isNaN(newBal)) {
-        alert("أدخل البيانات بشكل صحيح!");
+      if (!target || isNaN(newBal)) {
+        alert("أدخل البيانات بصورة صحيحة!");
         return;
       }
 
-      if (tUID == userData.uid) {
+      if (target === userData.uid.toString() || target === userData.username) {
         userData.balance = newBal;
         saveData();
-        alert("تم تحديث رصيدك الحسابي فوراً!");
+        alert("تم تحديث رصيدك بنجاح!");
       } else {
-        alert(`تم إرسال أمر التحديث للـ UID: ${tUID}`);
+        alert(`تم إرسال أمر التحديث للحساب: ${target}`);
       }
     }
-
-    // Run Initial State
-    renderUI();
   </script>
 </body>
 </html>
