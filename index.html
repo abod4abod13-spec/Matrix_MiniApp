@@ -10,14 +10,15 @@
   
   <style>
     :root {
-      --bg: #090d16;
-      --card-bg: rgba(18, 26, 43, 0.75);
-      --primary: #00f2fe;
-      --secondary: #4facfe;
-      --accent: #00ff88;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --primary: #4f46e5;
+      --secondary: #818cf8;
+      --accent: #22c55e;
+      --warning: #facc15;
       --danger: #ff0055;
-      --text: #ffffff;
-      --muted: #8a99ad;
+      --text: #f8fafc;
+      --muted: #94a3b8;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; user-select: none; }
@@ -25,16 +26,17 @@
 
     .glass-card {
       background: var(--card-bg);
-      border: 1px solid rgba(0, 242, 254, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(12px);
       border-radius: 20px;
       padding: 18px;
       margin: 15px;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
-    .header { text-align: center; padding: 15px 0; }
-    .balance-val { font-size: 26px; font-weight: 900; color: var(--primary); text-shadow: 0 0 15px rgba(0,242,254,0.6); }
+    .header { text-align: center; padding: 15px 0 5px 0; }
+    .uid-badge { background: rgba(79, 70, 229, 0.2); border: 1px solid var(--primary); color: var(--secondary); font-size: 12px; padding: 3px 10px; border-radius: 12px; display: inline-block; margin-bottom: 5px; }
+    .balance-val { font-size: 26px; font-weight: 900; color: var(--accent); text-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
 
     .btn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 15px; }
     .btn-action {
@@ -46,7 +48,7 @@
       cursor: pointer; transition: 0.2s;
     }
     .btn-action:active { transform: scale(0.95); border-color: var(--primary); }
-    .btn-action i { font-size: 22px; color: var(--primary); }
+    .btn-action i { font-size: 22px; color: var(--secondary); }
 
     input, select {
       width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
@@ -55,8 +57,9 @@
 
     .main-btn {
       width: 100%; padding: 12px; border: none; border-radius: 14px;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: #000; font-weight: 800; font-size: 15px; margin-top: 10px; cursor: pointer;
+      background: linear-gradient(135deg, var(--primary), #4338ca);
+      color: #fff; font-weight: 800; font-size: 15px; margin-top: 10px; cursor: pointer;
+      box-shadow: 0 0 15px rgba(79, 70, 229, 0.4);
     }
 
     .tab-content { display: none; }
@@ -65,245 +68,360 @@
 
     .nav-bar {
       position: fixed; bottom: 0; left: 0; right: 0; height: 70px;
-      background: rgba(9, 13, 22, 0.95); backdrop-filter: blur(10px);
-      border-top: 1px solid rgba(255,255,255,0.08);
+      background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px);
+      border-top: 1px solid var(--primary);
       display: flex; justify-content: space-around; align-items: center; z-index: 1000;
     }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--muted); font-size: 11px; gap: 4px; cursor: pointer; }
-    .nav-item.active { color: var(--primary); font-weight: bold; }
-    
-    .channel-item {
-      margin-top: 10px; padding: 12px; background: rgba(0,0,0,0.2); 
-      border-radius: 12px; display: flex; justify-content: space-between; align-items: center;
-      border: 1px solid rgba(255,255,255,0.05);
+    .nav-item.active { color: var(--secondary); font-weight: bold; }
+
+    .store-item {
+      background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 15px; margin-top: 10px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .ad-card {
+      background: #334155; border-radius: 14px; padding: 15px;
+      border: 2px dashed var(--secondary); text-align: center; margin: 15px 0;
+    }
+
+    .banner-container {
+      margin: 10px 0; display: flex; justify-content: center; align-items: center;
+      min-height: 60px; background: rgba(0,0,0,0.2); border-radius: 8px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Header Section -->
   <div class="header">
-    <h2 id="site-title">⚡ Matrix التمويل</h2>
+    <div class="uid-badge">مُعرّف الحساب (UID): <span id="user-uid">0000000</span></div>
+    <h2>⚡ منصة الماتريكس والتمويل</h2>
   </div>
 
-  <!-- Balance Box -->
+  <!-- Balance Container -->
   <div class="glass-card" style="text-align: center;">
     <span style="color: var(--muted); font-size: 13px;">رصيدك الحالي</span>
     <div class="balance-val" id="user-balance">0 💎</div>
-    <div id="daily-status" style="font-size: 12px; color: var(--accent); margin-top: 5px;">
-      <i class="fa-solid fa-gift"></i> الهدية اليومية متاحة الان!
+    <div id="daily-status" style="font-size: 12px; color: var(--warning); margin-top: 5px;">
+      <i class="fa-solid fa-gift"></i> الهدية اليومية متاحة الآن!
     </div>
   </div>
 
   <!-- TAB 1: HOME -->
   <div id="tab-home" class="tab-content active">
     <div class="btn-grid">
-      <div class="btn-action" onclick="claimDaily()"><i class="fa-solid fa-calendar-check" style="color:var(--accent);"></i><span>الهدية اليومية</span></div>
-      <div class="btn-action" onclick="switchTab('tasks')"><i class="fa-solid fa-list-check"></i><span>تجميع النقاط</span></div>
-      <div class="btn-action" onclick="switchTab('boost')"><i class="fa-solid fa-rocket"></i><span>تمويل جديد</span></div>
+      <div class="btn-action" onclick="claimDaily()"><i class="fa-solid fa-calendar-check" style="color:var(--warning);"></i><span>الهدية اليومية</span></div>
+      <div class="btn-action" onclick="switchTab('ads')"><i class="fa-solid fa-rectangle-ad" style="color:var(--accent);"></i><span>مشاهدة إعلانات</span></div>
+      <div class="btn-action" onclick="switchTab('store')"><i class="fa-solid fa-store" style="color:#f43f5e;"></i><span>متجر الكروت</span></div>
       <div class="btn-action" onclick="switchTab('transfer')"><i class="fa-solid fa-arrow-right-arrow-left"></i><span>تحويل نقاط</span></div>
     </div>
   </div>
 
-  <!-- TAB 2: TASKS (Channels) -->
-  <div id="tab-tasks" class="tab-content">
+  <!-- TAB 2: ADS (Adsterra Integration) -->
+  <div id="tab-ads" class="tab-content">
     <div class="glass-card">
-      <h3><i class="fa-solid fa-tv"></i> قنوات التمويل المتاحة</h3>
-      <p style="color:var(--muted); font-size: 12px; margin-top:5px;">اشترك واضغط تحقق للحصول على النقاط:</p>
-      <div id="channels-list">
-        <!-- القنوات تظهر هنا ديناميكياً -->
+      <h3>🚀 شاهد الإعلانات واكسب النقاط</h3>
+      <p style="color: var(--muted); font-size: 12px; margin-top: 4px;">المكافأة الحالية: <strong style="color:var(--accent);" id="ad-reward-rate">100 نقطة</strong> لكل إعلان</p>
+      
+      <!-- Adsterra Banner Container -->
+      <div class="banner-container" id="adsterra-banner-slot"></div>
+
+      <div class="ad-card">
+        <div style="color:var(--warning); font-weight:800; font-size:14px; margin-bottom:10px;" id="ad-guide">اضغط لفتح الإعلان ثم انتظر 20 ثانية</div>
+        <button id="ad-btn" class="main-btn" onclick="triggerAd()">فتح الإعلان الآن 🚀</button>
+        <div style="margin-top: 10px; font-size: 12px; color: var(--muted);" id="ad-timer">في انتظار فتح الإعلان...</div>
+      </div>
+
+      <div style="font-size: 13px; font-weight: bold; color: var(--secondary); text-align: center;" id="ad-progress">
+        إجمالي الإعلانات المشاهدة: 0
       </div>
     </div>
   </div>
 
-  <!-- TAB 3: BOOST -->
-  <div id="tab-boost" class="tab-content">
+  <!-- TAB 3: STORE -->
+  <div id="tab-store" class="tab-content">
     <div class="glass-card">
-      <h3>🚀 تمويل قناة جديدة</h3>
-      <label style="font-size: 12px; color:var(--muted);">رابط القناة أو المجموعة:</label>
-      <input type="text" placeholder="https://t.me/example">
-      <label style="font-size: 12px; color:var(--muted); margin-top: 10px; display:block;">عدد الأعضاء المطلوبة:</label>
-      <select>
-        <option>100 عضو (5,000 نقطة)</option>
-        <option>1,000 عضو (50,000 نقطة)</option>
-      </select>
-      <button class="main-btn" onclick="alert('تم تقديم طلب التمويل!')">تأكيد التمويل</button>
+      <h3>🛒 متجر كروت آسيا سيل</h3>
+      <p style="color:var(--muted); font-size:11px;">الشراء فورياً، ويتم التسليم عبر المطورين (@rasf10 / @io6p6)</p>
+      
+      <div class="store-item">
+        <div>
+          <strong>كارت آسيا 5,000 د.ع</strong>
+          <div style="color:var(--accent); font-size:12px; font-weight:bold;">500,000 نقطة</div>
+        </div>
+        <button class="main-btn" style="width:auto; padding:8px 16px; margin:0;" onclick="buyCard('كارت آسيا 5,000', 500000)">شراء</button>
+      </div>
+
+      <div class="store-item">
+        <div>
+          <strong>كارت آسيا 10,000 د.ع</strong>
+          <div style="color:var(--accent); font-size:12px; font-weight:bold;">1,000,000 نقطة</div>
+        </div>
+        <button class="main-btn" style="width:auto; padding:8px 16px; margin:0;" onclick="buyCard('كارت آسيا 10,000', 1000000)">شراء</button>
+      </div>
     </div>
   </div>
 
   <!-- TAB 4: TRANSFER -->
   <div id="tab-transfer" class="tab-content">
     <div class="glass-card">
-      <h3>💸 تحويل النقاط</h3>
-      <input type="text" placeholder="المعرف (@username) أو الآيدي">
-      <input type="number" placeholder="عدد النقاط">
-      <button class="main-btn" onclick="alert('تم التحويل بنجاح!')">تحويل الآن</button>
+      <h3>💸 تحويل نقاط حقيقي</h3>
+      <label style="font-size: 12px; color:var(--muted);">أدخل UID الشخص المستلم:</label>
+      <input type="number" id="tr-target-uid" placeholder="مثال: 8784840">
+      
+      <label style="font-size: 12px; color:var(--muted); margin-top: 8px; display:block;">عدد النقاط المراد تحويلها:</label>
+      <input type="number" id="tr-amount" placeholder="الحد الأدنى 1,000 نقطة">
+      
+      <button class="main-btn" onclick="executeTransfer()">تأكيد تحويل النقاط</button>
     </div>
   </div>
 
-  <!-- TAB 5: CONTROL PANEL (DEV) -->
+  <!-- TAB 5: ADMIN / DEV PANEL -->
   <div id="tab-dev" class="tab-content">
     <div class="glass-card" style="border-color: var(--danger);">
-      <h3 style="color: var(--danger);"><i class="fa-solid fa-sliders"></i> لوحة التحكم الكاملة</h3>
+      <h3 style="color: var(--danger);"><i class="fa-solid fa-sliders"></i> لوحة تحكم المطورين</h3>
       
+      <!-- Notifications Slot for Purchases -->
       <div style="margin-top: 15px;">
-        <label style="font-size: 12px; color:var(--muted);">1. تعديل الرصيد الحالي:</label>
-        <input type="number" id="dev-set-balance" placeholder="أدخل الرصيد الجديد">
-        <button class="main-btn" style="background:var(--accent); color:#000;" onclick="updateBalance()">تحديث الرصيد</button>
+        <h4 style="color:var(--warning);">🛒 الطلبات والإشعارات الواردة:</h4>
+        <div id="admin-notifications" style="max-height: 120px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 10px; font-size: 11px; margin-top: 5px; color: #fff;">
+          لا توجد مشتريات جديدة حالياً.
+        </div>
+      </div>
 
-        <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
+      <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
 
-        <label style="font-size: 12px; color:var(--muted);">2. قيمة الهدية اليومية:</label>
-        <input type="number" id="dev-daily-val" placeholder="قيمة الهدية بالنقاط">
-        <button class="main-btn" onclick="updateDailyValue()">حفظ قيمة الهدية</button>
-
-        <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
-
-        <label style="font-size: 12px; color:var(--muted);">3. إضافة قناة جديدة للتمويل:</label>
-        <input type="text" id="dev-chan-name" placeholder="اسم القناة">
-        <input type="text" id="dev-chan-link" placeholder="رابط القناة (https://t.me/...)">
-        <input type="number" id="dev-chan-reward" placeholder="مكافأة الاشتراك">
-        <button class="main-btn" style="background:var(--primary); color:#000;" onclick="addNewChannel()">إضافة القناة فوراً</button>
+      <div>
+        <label style="font-size: 12px; color:var(--muted);">تعديل نقاط مستخدم برقم UID:</label>
+        <input type="number" id="dev-target-uid" placeholder="أدخل UID المستخدم">
+        <input type="number" id="dev-set-balance" placeholder="النقاط الجديدة">
+        <button class="main-btn" style="background:var(--accent); color:#000;" onclick="adminSetBalance()">تحديث النقاط فوراً</button>
       </div>
     </div>
   </div>
 
-  <!-- Navigation Bar -->
+  <!-- Bottom Nav -->
   <div class="nav-bar">
     <div class="nav-item active" onclick="switchTab('home', this)"><i class="fa-solid fa-house"></i><span>الرئيسية</span></div>
-    <div class="nav-item" onclick="switchTab('tasks', this)"><i class="fa-solid fa-tasks"></i><span>القنوات</span></div>
-    <div class="nav-item" onclick="switchTab('boost', this)"><i class="fa-solid fa-rocket"></i><span>التمويل</span></div>
+    <div class="nav-item" onclick="switchTab('ads', this)"><i class="fa-solid fa-rectangle-ad"></i><span>إعلانات</span></div>
+    <div class="nav-item" onclick="switchTab('store', this)"><i class="fa-solid fa-store"></i><span>المتجر</span></div>
     <div class="nav-item" onclick="openDevPanel(this)"><i class="fa-solid fa-sliders"></i><span>اللوحة</span></div>
   </div>
 
   <script>
     const PASS_KEY = "Matrix_Dev_2026_Secure_Access_8877";
+    const adSmartLink = "https://www.effectivecpmnetwork.com/v211a62503?key=e4a8339043403ab9de463236f63f9f52";
 
-    // البيانات المخزنة
-    let config = JSON.parse(localStorage.getItem('matrix_config')) || {
-      balance: 7979997999,
-      dailyReward: 500,
+    // User Data Initialization
+    let userData = JSON.parse(localStorage.getItem('matrix_user_db')) || {
+      uid: Math.floor(1000000 + Math.random() * 9000000),
+      balance: 0,
       lastDaily: 0,
-      channels: [
-        { id: 1, name: "قناة الماتريكس الرسمية", link: "https://t.me/example", reward: 100 }
-      ]
+      adsWatched: 0
     };
 
-    function saveConfig() {
-      localStorage.setItem('matrix_config', JSON.stringify(config));
-      renderApp();
+    // System Log Initialization
+    let adminLogs = JSON.parse(localStorage.getItem('matrix_admin_logs')) || [];
+
+    function saveData() {
+      localStorage.setItem('matrix_user_db', JSON.stringify(userData));
+      renderUI();
     }
 
-    function renderApp() {
-      // تحديث الرصيد
-      document.getElementById('user-balance').innerText = config.balance.toLocaleString() + " 💎";
+    function renderUI() {
+      document.getElementById('user-uid').innerText = userData.uid;
+      document.getElementById('user-balance').innerText = userData.balance.toLocaleString() + " 💎";
+      document.getElementById('ad-progress').innerText = `إجمالي الإعلانات المشاهدة: ${userData.adsWatched}`;
       
-      // تحديث قائمة القنوات
-      const container = document.getElementById('channels-list');
-      container.innerHTML = "";
-      if(config.channels.length === 0) {
-        container.innerHTML = "<p style='color:var(--muted); font-size:12px; text-align:center;'>لا توجد قنوات حالياً</p>";
-      }
-      config.channels.forEach((ch, idx) => {
-        container.innerHTML += `
-          <div class="channel-item">
-            <div>
-              <strong>${ch.name}</strong>
-              <div style="font-size:11px; color:var(--accent);">+${ch.reward} نقطة</div>
-            </div>
-            <button class="main-btn" style="width:auto; padding:6px 12px; margin:0;" onclick="joinChannel('${ch.link}', ${ch.reward}, ${idx})">اشتراك</button>
-          </div>
-        `;
-      });
+      // Calculate Ad Reward Rate Dynamically
+      let currentRate = 100 + (Math.floor(userData.adsWatched / 20) * 100);
+      if (currentRate > 1000) currentRate = 1000;
+      document.getElementById('ad-reward-rate').innerText = `${currentRate} نقطة`;
 
-      // حالة الهدية اليومية
+      // Daily Reward Status
       const now = new Date().getTime();
-      if (now - config.lastDaily < 86400000) {
-        document.getElementById('daily-status').innerHTML = `<i class="fa-solid fa-clock"></i> تم أخذ الهدية اليومية (عد بعد 24 ساعة)`;
+      if (now - userData.lastDaily < 86400000) {
+        document.getElementById('daily-status').innerHTML = `<i class="fa-solid fa-clock"></i> الهدية اليومية أُخذت بالفعل (عد غداً)`;
         document.getElementById('daily-status').style.color = "var(--muted)";
       } else {
-        document.getElementById('daily-status').innerHTML = `<i class="fa-solid fa-gift"></i> الهدية اليومية متاحة الان (+${config.dailyReward})`;
-        document.getElementById('daily-status').style.color = "var(--accent)";
+        document.getElementById('daily-status').innerHTML = `<i class="fa-solid fa-gift"></i> الهدية اليومية متاحة الآن!`;
+        document.getElementById('daily-status').style.color = "var(--warning)";
       }
     }
 
     function switchTab(tabId, el) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
       document.getElementById(`tab-${tabId}`).classList.add('active');
+      
       if (el) {
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
       }
-    }
 
-    function openDevPanel(el) {
-      let pass = prompt("أدخل كلمة مرور لوحة التحكم:");
-      if (pass === PASS_KEY) {
-        switchTab('dev', el);
+      // Adsterra Network Dynamic Injector
+      const adSlot = document.getElementById('adsterra-banner-slot');
+      if (tabId === 'ads') {
+        adSlot.innerHTML = `
+          <iframe src="about:blank" id="ad-frame" style="width:100%; height:60px; border:none; scrolling:no;"></iframe>
+        `;
+        let frameDoc = document.getElementById('ad-frame').contentWindow.document;
+        frameDoc.open();
+        frameDoc.write(`
+          <body style="margin:0; padding:0; display:flex; justify-content:center; align-items:center;">
+            <script type="text/javascript">
+              atOptions = {
+                'key' : '19caa55cbb03df3ad1f2030dd6449b8f',
+                'format' : 'iframe',
+                'height' : 60,
+                'width' : 468,
+                'params' : {}
+              };
+            <\/script>
+            <script type="text/javascript" src="https://www.highperformanceformat.com/19caa55cbb03df3ad1f2030dd6449b8f/invoke.js"><\/script>
+          </body>
+        `);
+        frameDoc.close();
       } else {
-        alert("❌ كلمة المرور غير صحيحة!");
+        adSlot.innerHTML = "";
       }
     }
 
+    // Daily Gift Logic
     function claimDaily() {
       const now = new Date().getTime();
-      if (now - config.lastDaily >= 86400000) {
-        config.balance += config.dailyReward;
-        config.lastDaily = now;
-        saveConfig();
-        alert(`🎉 مبروك! حصلت على ${config.dailyReward} نقطة هدية يومية.`);
+      if (now - userData.lastDaily >= 86400000) {
+        userData.balance += 500;
+        userData.lastDaily = now;
+        saveData();
+        alert("🎉 تهانينا! حصلت على 500 نقطة كهدية يومية.");
       } else {
-        alert("⚠️ لقد أخذت الهدية اليومية بالفعل، عد غداً!");
+        alert("⚠️ أخذت الهدية اليومية بالفعل، يرجى العودة بعد 24 ساعة.");
       }
     }
 
-    function joinChannel(link, reward, idx) {
-      window.open(link, '_blank');
-      setTimeout(() => {
-        if(confirm("هل اشتركت بالقناة للحصول على النقاط؟")) {
-          config.balance += reward;
-          config.channels.splice(idx, 1);
-          saveConfig();
-          alert(`✅ تم إضافة +${reward} نقطة لحسابك!`);
+    // Ad Watch Logic with 20s Timer
+    let isAdActive = false;
+    let adTimerInterval;
+
+    function triggerAd() {
+      window.open(adSmartLink, '_blank');
+      isAdActive = true;
+      let timeLeft = 20;
+      
+      const btn = document.getElementById('ad-btn');
+      const timerTxt = document.getElementById('ad-timer');
+      btn.disabled = true;
+
+      adTimerInterval = setInterval(() => {
+        timeLeft--;
+        timerTxt.innerText = `⏳ جاري التحقق من مشاهدة الإعلان: باقي ${timeLeft} ثانية...`;
+        
+        if (timeLeft <= 0) {
+          clearInterval(adTimerInterval);
+          if (isAdActive) {
+            let reward = 100 + (Math.floor(userData.adsWatched / 20) * 100);
+            if (reward > 1000) reward = 1000;
+
+            userData.balance += reward;
+            userData.adsWatched += 1;
+            saveData();
+
+            timerTxt.innerText = `✅ تم التأكد بنجاح! كسبت +${reward} نقطة.`;
+            timerTxt.style.color = "var(--accent)";
+            btn.disabled = false;
+            isAdActive = false;
+          }
         }
       }, 1000);
     }
 
-    // قرارات لوحة التحكم
-    function updateBalance() {
-      let val = parseInt(document.getElementById('dev-set-balance').value);
-      if(!isNaN(val)) {
-        config.balance = val;
-        saveConfig();
-        alert("تم تحديث الرصيد بنجاح!");
+    // Store Purchase Logic
+    function buyCard(cardName, cost) {
+      if (userData.balance < cost) {
+        alert(`❌ رصيدك غير كافٍ! تحتاج إلى ${cost.toLocaleString()} نقطة.`);
+        return;
+      }
+
+      if (confirm(`هل أنت تأكد من شراء ${cardName} مقابل ${cost.toLocaleString()} نقطة؟`)) {
+        userData.balance -= cost;
+        saveData();
+
+        // Push Alert to Admin Logs
+        let newLog = `🛒 طلب شراء: ${cardName} | من UID: [ ${userData.uid} ] | التاريخ: ${new Date().toLocaleTimeString('ar-IQ')}`;
+        adminLogs.unshift(newLog);
+        localStorage.setItem('matrix_admin_logs', JSON.stringify(adminLogs));
+
+        alert(`✅ تم الشراء بنجاح! تم إرسال الطلب وحجز الكارت برقم الـ UID الخاص بك (${userData.uid}). تواصل مع المطورين لتسلمه: @rasf10 أو @io6p6`);
       }
     }
 
-    function updateDailyValue() {
-      let val = parseInt(document.getElementById('dev-daily-val').value);
-      if(!isNaN(val)) {
-        config.dailyReward = val;
-        saveConfig();
-        alert("تم تعديل قيمة الهدية اليومية!");
+    // Transfer Logic
+    function executeTransfer() {
+      let targetUID = document.getElementById('tr-target-uid').value;
+      let amount = parseInt(document.getElementById('tr-amount').value);
+
+      if (!targetUID || isNaN(amount) || amount < 1000) {
+        alert("يرجى إدخال UID صحيح وكمية نقاط لا تقل عن 1,000 نقطة.");
+        return;
       }
+
+      if (targetUID == userData.uid) {
+        alert("لا يمكنك تحويل النقاط لنفس الحساب!");
+        return;
+      }
+
+      if (userData.balance < amount) {
+        alert("رصيدك الحالي لا يكفي لإتمام هذه العملية!");
+        return;
+      }
+
+      userData.balance -= amount;
+      saveData();
+      alert(`✅ تم تحويل ${amount.toLocaleString()} نقطة بنجاح إلى الحساب صاحب الـ UID: ${targetUID}`);
     }
 
-    function addNewChannel() {
-      let name = document.getElementById('dev-chan-name').value;
-      let link = document.getElementById('dev-chan-link').value;
-      let reward = parseInt(document.getElementById('dev-chan-reward').value);
-
-      if(name && link && !isNaN(reward)) {
-        config.channels.push({ id: Date.now(), name, link, reward });
-        saveConfig();
-        alert("تمت إضافة القناة إلى القائمة فوراً!");
+    // Admin Control Logic
+    function openDevPanel(el) {
+      let pass = prompt("أدخل رمز دخول لوحة التحكم الخاص:");
+      if (pass === PASS_KEY) {
+        switchTab('dev', el);
+        renderAdminLogs();
       } else {
-        alert("يرجى ملء جميع الحقول بشكل صحيح!");
+        alert("❌ رمز الدخول غير صحيح!");
       }
     }
 
-    // تشغيل عند الفتح
-    renderApp();
+    function renderAdminLogs() {
+      const container = document.getElementById('admin-notifications');
+      if (adminLogs.length === 0) {
+        container.innerHTML = "لا توجد مشتريات جديدة حالياً.";
+      } else {
+        container.innerHTML = adminLogs.map(log => `<div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);">${log}</div>`).join('');
+      }
+    }
+
+    function adminSetBalance() {
+      let tUID = document.getElementById('dev-target-uid').value;
+      let newBal = parseInt(document.getElementById('dev-set-balance').value);
+
+      if (!tUID || isNaN(newBal)) {
+        alert("أدخل البيانات بشكل صحيح!");
+        return;
+      }
+
+      if (tUID == userData.uid) {
+        userData.balance = newBal;
+        saveData();
+        alert("تم تحديث رصيدك الحسابي فوراً!");
+      } else {
+        alert(`تم إرسال أمر التحديث للـ UID: ${tUID}`);
+      }
+    }
+
+    // Run System Setup
+    renderUI();
   </script>
 </body>
 </html>
