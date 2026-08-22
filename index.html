@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Matrix Platform & Story Boost Ultra ⚡</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <!-- مكتبة Adsgram الرسمية للإعلانات -->
+  <!-- مكتبة Adsgram الرسمية -->
   <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -27,7 +27,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; user-select: none; }
     body { background-color: var(--bg); color: var(--text); padding-bottom: 95px; }
 
-    /* Modal / Auth Screen */
     .modal-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(15px);
@@ -188,7 +187,6 @@
       <div class="btn-action" onclick="switchTab('leaderboard')"><i class="fa-solid fa-trophy" style="color:var(--warning);"></i><span>لوحة الصدارة</span></div>
     </div>
 
-    <!-- Referral Link Box -->
     <div class="glass-card">
       <h4 style="font-size:12px; color:var(--secondary);"><i class="fa-solid fa-share-nodes"></i> رابط الإحالة الخاص بك (ربح +200 نقطة):</h4>
       <input type="text" id="ref-link-input" readonly value="https://t.me/MatrixBot?start=ref_000">
@@ -211,7 +209,7 @@
     </div>
   </div>
 
-  <!-- TAB 3: FUNDING & STORY BOOSTING -->
+  <!-- TAB 3: FUNDING -->
   <div id="tab-funding" class="tab-content">
     <div class="glass-card">
       <h3>🚀 تمويل القنوات والقصص (Story Boost)</h3>
@@ -266,17 +264,17 @@
     </div>
   </div>
 
-  <!-- TAB 5: ADS (Adsgram SDK Integration) -->
+  <!-- TAB 5: ADS (Test Block Integration) -->
   <div id="tab-ads" class="tab-content">
     <div class="glass-card" style="text-align: center;">
-      <h3>🚀 مشاهدة الإعلانات الحقيقية</h3>
+      <h3>🚀 مشاهدة الإعلانات (وضع الاختبار)</h3>
       <p style="color:var(--muted); font-size:12px;">المكافأة: <strong style="color:var(--accent);">+100 نقطة</strong> فور مشاهدة الإعلان</p>
 
       <div id="ad-container" style="margin:15px 0; padding:10px; background:rgba(0,0,0,0.3); border-radius:12px; min-height:80px; display:flex; align-items:center; justify-content:center;">
         <span style="font-size:11px; color:var(--muted);" id="ad-status-text">الإعلان جاهز للعرض والتشغيل</span>
       </div>
 
-      <button class="main-btn" id="start-ad-btn" onclick="triggerRealAd()">مشاهدة الإعلان الآن 🚀</button>
+      <button class="main-btn" id="start-ad-btn" onclick="triggerTestAd()">مشاهدة الإعلان التجريبي 🚀</button>
     </div>
   </div>
 
@@ -497,35 +495,30 @@
       alert("✅ تم إطلاق حملة التمويل بنجاح وخصم النقاط!");
     }
 
-    // دالة Adsgram المحسنة بمعالجة الأخطاء
-    function triggerRealAd() {
+    // دالة تشغيل الإعلانات التجريبية الرسمية من Adsgram
+    function triggerTestAd() {
       const statusText = document.getElementById('ad-status-text');
-      statusText.innerText = "جاري الاتصال بمنصة Adsgram...";
+      statusText.innerText = "جاري الاتصال بالسيرفر التجريبي لـ Adsgram...";
 
-      try {
-        if (typeof window.Adsgram === 'undefined') {
-          statusText.innerText = "❌ مكتبة الإعلانات لم تحمل. يرجى فتح البوت من داخل تلغرام.";
-          alert("خطأ: يرجى فتح الميني أب من تطبيق تلغرام الرسمي لكي يعمل الإعلان.");
-          return;
-        }
-
-        const adController = window.Adsgram.init({ blockId: "44115" });
-
-        adController.show().then((result) => {
-          userData.balance += 100;
-          pushActivityLog(`📺 شاهد ${userData.name} إعلاناً رسمياً وحصل على +100 نقطة`);
-          saveData();
-          statusText.innerText = "✅ تم استلام +100 نقطة بنجاح!";
-          alert("🎉 مبروك! تمت مشاهدة الإعلان وإضافة 100 نقطة إلى رصيدك.");
-        }).catch((err) => {
-          statusText.innerText = "⚠️ تم إغلاق الإعلان أو حدث خطأ في العرض.";
-          console.error("Adsgram Error:", err);
-        });
-
-      } catch (e) {
-        statusText.innerText = "❌ تعذر تشغيل الإعلان حالياً.";
-        console.error(e);
+      if (typeof window.Adsgram === 'undefined') {
+        statusText.innerText = "❌ يرجى فتح التطبيق من داخل تلغرام لتشغيل المكتبة.";
+        alert("افتح الميني أب من داخل تطبيق تلغرام الرسمي.");
+        return;
       }
+
+      // استخدام المعرف التجريبي الرسمي المضمون 100% "check"
+      const adController = window.Adsgram.init({ blockId: "check" });
+
+      adController.show().then((result) => {
+        userData.balance += 100;
+        pushActivityLog(`📺 شاهد ${userData.name} إعلاناً اختباريًا وحصل على +100 نقطة`);
+        saveData();
+        statusText.innerText = "✅ تمت مشاهدة الإعلان التجريبي واستلام +100 نقطة!";
+        alert("🎉 نجاح التجربة! تمت مشاهدة الإعلان وإضافة 100 نقطة إلى رصيدك.");
+      }).catch((err) => {
+        console.error("Test Ad Error:", err);
+        statusText.innerText = "⚠️ تعذر عرض الإعلان التجريبي.";
+      });
     }
 
     function renderLeaderboard(type) {
