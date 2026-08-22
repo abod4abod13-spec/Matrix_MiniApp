@@ -3,19 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Adsgram Integration Test</title>
+  <title>Adsgram Test</title>
   
-  <!-- 1. سكريبت تلغرام الرسمي -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  
-  <!-- 2. سكريبت Adsgram الرسمي -->
   <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 
   <style>
     body {
       background-color: #0f172a;
       color: #fff;
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: system-ui, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -23,15 +20,13 @@
       height: 100vh;
       margin: 0;
       padding: 20px;
-      box-sizing: border-box;
     }
     .card {
       background: #1e293b;
-      padding: 30px;
+      padding: 25px;
       border-radius: 20px;
       text-align: center;
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-      border: 1px solid rgba(255,255,255,0.1);
       width: 100%;
       max-width: 350px;
     }
@@ -39,60 +34,56 @@
       background: linear-gradient(135deg, #4f46e5, #4338ca);
       color: white;
       border: none;
-      padding: 14px 20px;
-      font-size: 16px;
+      padding: 14px;
+      font-size: 15px;
       font-weight: bold;
       border-radius: 12px;
       cursor: pointer;
       width: 100%;
-      margin-top: 15px;
-      transition: 0.2s;
+      margin-top: 10px;
     }
-    .btn:active {
-      transform: scale(0.98);
-    }
-    #status {
-      margin-top: 15px;
-      font-size: 13px;
-      color: #38bdf8;
-      line-height: 1.5;
-    }
+    #status { margin-top: 15px; font-size: 13px; color: #38bdf8; }
   </style>
 </head>
 <body>
 
   <div class="card">
-    <h2>🚀 تجربة إعلانات Adsgram</h2>
-    <p style="color: #94a3b8; font-size: 13px;">البلوك المفعّل: <b>44130</b></p>
+    <h2>🚀 اختبار Adsgram المباشر</h2>
+    <p style="color:#94a3b8; font-size:12px;">البلوك: <b>44130</b></p>
+
+    <!-- زر مع وضع التجربة المضمون -->
+    <button class="btn" onclick="showAd(true)">تجربة العرض (Test Mode) 🧪</button>
     
-    <button class="btn" onclick="showRewardAd()">مشاهدة الإعلان والمكافأة 💎</button>
-    <div id="status">اضغط على الزر لعرض الإعلان</div>
+    <!-- زر الإعلانات الحقيقية -->
+    <button class="btn" style="background:#22c55e;" onclick="showAd(false)">طلب إعلان حقيقي 💎</button>
+
+    <div id="status">جاهز للاختبار</div>
   </div>
 
   <script>
-    // إعلام تلغرام بجاهزية الصفحة
     window.Telegram.WebApp.ready();
 
-    function showRewardAd() {
+    function showAd(isTest) {
       const status = document.getElementById('status');
-      status.innerText = "جاري جلب الإعلان...";
+      status.innerText = "جاري طلب الإعلان...";
 
       if (typeof window.Adsgram === 'undefined') {
-        status.innerText = "❌ يرجى فتح الصفحة من داخل تطبيق تلغرام الرسمي!";
+        status.innerText = "❌ افتح الصفحة من داخل التلغرام";
         return;
       }
 
-      // استدعاء البلوك الخاص بك المفعّل
-      const adController = window.Adsgram.init({ blockId: "44130" });
+      // إرسال debug: true لإجبار المنصة على إرجاع إعلان فحص تجريبي
+      const adController = window.Adsgram.init({ 
+        blockId: "44130",
+        debug: isTest 
+      });
 
       adController.show().then((result) => {
-        // يتم تنفيذ هذا الجزء عند مشاهدة الإعلان بنجاح حتى النهاية
-        status.innerText = "🎉 تم مشاهدة الإعلان بنجاح وحساب المكافأة!";
-        alert("🎉 مبروك! اكملت مشاهدة الإعلان بنجاح.");
+        status.innerText = "🎉 تم مشاهدة الإعلان بنجاح واستلام المكافأة!";
+        alert("🎉 مبروك! نجحت العملية وحصلت على المكافأة.");
       }).catch((error) => {
-        // يتم تنفيذ هذا الجزء في حال إغلاق الإعلان قبل وقته أو حدوث خطأ شبكة
         console.log("Adsgram Error:", error);
-        status.innerText = "⚠️ تم إغلاق الإعلان قبل اكتماله أو لا يوجد إعلان متوفر حالياً.";
+        status.innerText = "⚠️ لم يتوفر إعلان حقيقي حالياً (No Fill) أو تم الإغلاق.";
       });
     }
   </script>
