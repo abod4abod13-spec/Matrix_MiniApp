@@ -103,7 +103,7 @@
       display: flex; align-items: center; padding: 0 10px;
     }
     .nav-bar-wrapper::-webkit-scrollbar { display: none; }
-    .nav-container { display: flex; gap: 15px; width: 100%; justify-content: space-around; min-width: 480px; }
+    .nav-container { display: flex; gap: 15px; width: 100%; justify-space-around; min-width: 480px; }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--muted); font-size: 10px; gap: 3px; cursor: pointer; min-width: 50px; }
     .nav-item.active { color: var(--secondary); font-weight: bold; }
 
@@ -264,17 +264,17 @@
     </div>
   </div>
 
-  <!-- TAB 5: ADS (Test Block Integration) -->
+  <!-- TAB 5: ADS (Corrected Adsgram Setup) -->
   <div id="tab-ads" class="tab-content">
     <div class="glass-card" style="text-align: center;">
-      <h3>🚀 مشاهدة الإعلانات (وضع الاختبار)</h3>
+      <h3>🚀 مشاهدة الإعلانات الحقيقية</h3>
       <p style="color:var(--muted); font-size:12px;">المكافأة: <strong style="color:var(--accent);">+100 نقطة</strong> فور مشاهدة الإعلان</p>
 
       <div id="ad-container" style="margin:15px 0; padding:10px; background:rgba(0,0,0,0.3); border-radius:12px; min-height:80px; display:flex; align-items:center; justify-content:center;">
-        <span style="font-size:11px; color:var(--muted);" id="ad-status-text">الإعلان جاهز للعرض والتشغيل</span>
+        <span style="font-size:11px; color:var(--muted);" id="ad-status-text">اضغط أدناه لفتح الإعلان</span>
       </div>
 
-      <button class="main-btn" id="start-ad-btn" onclick="triggerTestAd()">مشاهدة الإعلان التجريبي 🚀</button>
+      <button class="main-btn" id="start-ad-btn" onclick="triggerRealAd()">مشاهدة الإعلان الآن 🚀</button>
     </div>
   </div>
 
@@ -495,29 +495,29 @@
       alert("✅ تم إطلاق حملة التمويل بنجاح وخصم النقاط!");
     }
 
-    // دالة تشغيل الإعلانات التجريبية الرسمية من Adsgram
-    function triggerTestAd() {
+    // دالة Adsgram المحسنة والمطابقة لمعايير المكتبة
+    function triggerRealAd() {
       const statusText = document.getElementById('ad-status-text');
-      statusText.innerText = "جاري الاتصال بالسيرفر التجريبي لـ Adsgram...";
+      statusText.innerText = "جاري الاتصال بشبكة Adsgram...";
 
       if (typeof window.Adsgram === 'undefined') {
-        statusText.innerText = "❌ يرجى فتح التطبيق من داخل تلغرام لتشغيل المكتبة.";
+        statusText.innerText = "❌ يرجى فتح التطبيق من داخل تلغرام لتشغيل الإعلان.";
         alert("افتح الميني أب من داخل تطبيق تلغرام الرسمي.");
         return;
       }
 
-      // استخدام المعرف التجريبي الرسمي المضمون 100% "check"
-      const adController = window.Adsgram.init({ blockId: "check" });
+      // تمرير الـ blockId المتوافق مع نوع Interstitial
+      const adController = window.Adsgram.init({ blockId: "int-44115" });
 
       adController.show().then((result) => {
         userData.balance += 100;
-        pushActivityLog(`📺 شاهد ${userData.name} إعلاناً اختباريًا وحصل على +100 نقطة`);
+        pushActivityLog(`📺 شاهد ${userData.name} إعلاناً وحصل على +100 نقطة`);
         saveData();
-        statusText.innerText = "✅ تمت مشاهدة الإعلان التجريبي واستلام +100 نقطة!";
-        alert("🎉 نجاح التجربة! تمت مشاهدة الإعلان وإضافة 100 نقطة إلى رصيدك.");
+        statusText.innerText = "✅ تمت مشاهدة الإعلان بنجاح واحتساب +100 نقطة!";
+        alert("🎉 مبروك! تمت مشاهدة الإعلان وإضافة 100 نقطة إلى رصيدك.");
       }).catch((err) => {
-        console.error("Test Ad Error:", err);
-        statusText.innerText = "⚠️ تعذر عرض الإعلان التجريبي.";
+        console.log("Adsgram Event Result:", err);
+        statusText.innerText = "⚠️ تم إغلاق الإعلان أو حدث خطأ في العرض.";
       });
     }
 
