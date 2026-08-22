@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Matrix Platform & Story Boost Ultra ⚡</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- مكتبة Adsgram الرسمية للإعلانات -->
+  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
   
@@ -273,13 +275,13 @@
     </div>
   </div>
 
-  <!-- TAB 5: ADS (إعلانات حقيقية) -->
+  <!-- TAB 5: ADS (إعلانات Adsgram الحقيقية) -->
   <div id="tab-ads" class="tab-content">
     <div class="glass-card" style="text-align: center;">
       <h3>🚀 مشاهدة الإعلانات الحقيقية</h3>
       <p style="color:var(--muted); font-size:12px;">المكافأة: <strong style="color:var(--accent);">+100 نقطة</strong> فور مشاهدة الإعلان</p>
 
-      <!-- Slot for Adsterra Real Ad -->
+      <!-- Slot for Real Ad Status -->
       <div id="ad-container" style="margin:15px 0; padding:10px; background:rgba(0,0,0,0.3); border-radius:12px; min-height:80px; display:flex; align-items:center; justify-content:center;">
         <span style="font-size:11px; color:var(--muted);" id="ad-status-text">الإعلان جاهز للعرض والتشغيل</span>
       </div>
@@ -411,7 +413,6 @@
       if (!username.startsWith('@')) username = '@' + username;
       const cleanUser = username.replace('@', '');
       
-      // Real Telegram Avatar Endpoint
       const avatarUrl = `https://t.me/i/userpic/320/${cleanUser}.jpg`;
       if (!storyUrl) storyUrl = `https://t.me/${cleanUser}`;
 
@@ -510,17 +511,32 @@
       alert("✅ تم إطلاق حملة التمويل بنجاح وخصم النقاط!");
     }
 
+    // دالة مشاهدة الإعلانات عبر Adsgram بالـ Block ID الخاص بك (44115)
     function triggerRealAd() {
       const statusText = document.getElementById('ad-status-text');
-      statusText.innerText = "جاري تحميل الإعلان والتحقق... (انتظر 5 ثوانٍ)";
-      
-      setTimeout(() => {
+      statusText.innerText = "جاري تحميل الإعلان الرسمي...";
+
+      if (typeof window.Adsgram === 'undefined') {
+        statusText.innerText = "❌ تعذر تحميل نظام الإعلانات. تأكد من اتصالك بالإنترنت.";
+        alert("خطأ: لم يتم تحميل مكتبة Adsgram.");
+        return;
+      }
+
+      // تهيئة الإعلان بالـ Block ID المطلوب
+      const adController = window.Adsgram.init({ blockId: "44115" });
+
+      adController.show().then((result) => {
+        // عند إتمام المشاهدة بنجاح
         userData.balance += 100;
-        pushActivityLog(`📺 شاهد ${userData.name} إعلاناً وحصل على +100 نقطة`);
+        pushActivityLog(`📺 شاهد ${userData.name} إعلاناً رسمياً وحصل على +100 نقطة`);
         saveData();
         statusText.innerText = "✅ تم استلام +100 نقطة بنجاح!";
         alert("🎉 مبروك! تمت مشاهدة الإعلان وإضافة 100 نقطة إلى رصيدك.");
-      }, 5000);
+      }).catch((result) => {
+        // عند إغلاق الإعلان قبل انتهائه أو حدوث خطأ
+        statusText.innerText = "⚠️ تم إغلاق الإعلان قبل اكتماله ولم تحصل على المكافأة.";
+        console.log("Ad skipped or failed:", result);
+      });
     }
 
     function renderLeaderboard(type) {
@@ -660,6 +676,22 @@
         switchTab('dev', el);
       } else {
         alert("❌ كلمة السر غير صحيحة!");
+      }
+    }
+
+    function adminSetBalance() {
+      let target = document.getElementById('dev-target').value.trim();
+      let newBalance = parseInt(document.getElementById('dev-set-balance').value);
+      if (!target || isNaN(newBalance)) {
+        alert("يرجى إدخال المعرف والنقاط بشكل صحيح!");
+        return;
+      }
+      if (userData && (userData.uid == target || userData.username === target)) {
+        userData.balance = newBalance;
+        saveData();
+        alert("✅ تم تحديث رصيدك بنجاح من لوحة المطور!");
+      } else {
+        alert("تم تعديل النقاط افتراضياً للمستخدم المستهدف.");
       }
     }
 
