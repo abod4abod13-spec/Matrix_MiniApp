@@ -103,7 +103,7 @@
       display: flex; align-items: center; padding: 0 10px;
     }
     .nav-bar-wrapper::-webkit-scrollbar { display: none; }
-    .nav-container { display: flex; gap: 15px; width: 100%; justify-space-around; min-width: 480px; }
+    .nav-container { display: flex; gap: 15px; width: 100%; justify-content: space-around; min-width: 480px; }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--muted); font-size: 10px; gap: 3px; cursor: pointer; min-width: 50px; }
     .nav-item.active { color: var(--secondary); font-weight: bold; }
 
@@ -264,17 +264,21 @@
     </div>
   </div>
 
-  <!-- TAB 5: ADS (Corrected Adsgram Setup) -->
+  <!-- TAB 5: ADS (Protected against Hangs) -->
   <div id="tab-ads" class="tab-content">
     <div class="glass-card" style="text-align: center;">
-      <h3>🚀 مشاهدة الإعلانات الحقيقية</h3>
-      <p style="color:var(--muted); font-size:12px;">المكافأة: <strong style="color:var(--accent);">+100 نقطة</strong> فور مشاهدة الإعلان</p>
+      <h3>🚀 مركز الإعلانات والمكافآت</h3>
+      <p style="color:var(--muted); font-size:12px; margin-bottom:12px;">المكافأة: <strong style="color:var(--accent);">+100 نقطة</strong> لكل إعلان</p>
 
-      <div id="ad-container" style="margin:15px 0; padding:10px; background:rgba(0,0,0,0.3); border-radius:12px; min-height:80px; display:flex; align-items:center; justify-content:center;">
-        <span style="font-size:11px; color:var(--muted);" id="ad-status-text">اضغط أدناه لفتح الإعلان</span>
+      <div id="ad-container" style="margin:15px 0; padding:12px; background:rgba(0,0,0,0.3); border-radius:12px; min-height:60px; display:flex; align-items:center; justify-content:center;">
+        <span style="font-size:12px; color:var(--text);" id="ad-status-text">اختر نوع الإعلان للعرض</span>
       </div>
 
-      <button class="main-btn" id="start-ad-btn" onclick="triggerRealAd()">مشاهدة الإعلان الآن 🚀</button>
+      <!-- إعلان حقيقي مع حماية من التعليق -->
+      <button class="main-btn" onclick="showAdWithTimeout('44115', false)">مشاهدة إعلان حقيقي 🚀</button>
+
+      <!-- إعلان تجريبي محلي محمي مئة بالمئة -->
+      <button class="main-btn" style="background:#334155; margin-top:8px;" onclick="showAdWithTimeout('demo', true)">مشاهدة إعلان تجريبي (مضمون) 🧪</button>
     </div>
   </div>
 
@@ -495,30 +499,69 @@
       alert("✅ تم إطلاق حملة التمويل بنجاح وخصم النقاط!");
     }
 
-    // دالة Adsgram المحسنة والمطابقة لمعايير المكتبة
-    function triggerRealAd() {
+    // دالة محصنة بمعالج مؤقت لمنع تجمد الواجهة
+    function showAdWithTimeout(blockId, isDemo = false) {
       const statusText = document.getElementById('ad-status-text');
+      
+      if (isDemo) {
+        statusText.innerText = "جاري تشغيل الإعلان التجريبي...";
+        setTimeout(() => {
+          userData.balance += 100;
+          pushActivityLog(`🧪 شاهد ${userData.name} إعلاناً تجريبياً (+100 نقطة)`);
+          saveData();
+          statusText.innerText = "✅ نجاح! تمت إضافة +100 نقطة من الإعلان التجريبي.";
+          alert("🎉 تمت مشاهدة الإعلان التجريبي وإضافة 100 نقطة!");
+        }, 1200);
+        return;
+      }
+
       statusText.innerText = "جاري الاتصال بشبكة Adsgram...";
 
+      let adFinished = false;
+
+      // مؤقت لفك تجمّد الصفحة بعد 7 ثوانٍ إذا علقت Adsgram
+      const timeoutTimer = setTimeout(() => {
+        if (!adFinished) {
+          adFinished = true;
+          statusText.innerText = "⚠️ لم يتوفر إعلان حالياً من Adsgram، جرب لاحقاً.";
+          alert("⚠️ السيرفر لم يرجع إعلاناً في الوقت المحدد. تأكد من ربط البوت بـ Adsgram Dashboard.");
+        }
+      }, 7000);
+
       if (typeof window.Adsgram === 'undefined') {
-        statusText.innerText = "❌ يرجى فتح التطبيق من داخل تلغرام لتشغيل الإعلان.";
+        clearTimeout(timeoutTimer);
+        statusText.innerText = "❌ يرجى استخدام التطبيق من داخل تلغرام الرسمي.";
         alert("افتح الميني أب من داخل تطبيق تلغرام الرسمي.");
         return;
       }
 
-      // تمرير الـ blockId المتوافق مع نوع Interstitial
-      const adController = window.Adsgram.init({ blockId: "int-44115" });
-
-      adController.show().then((result) => {
-        userData.balance += 100;
-        pushActivityLog(`📺 شاهد ${userData.name} إعلاناً وحصل على +100 نقطة`);
-        saveData();
-        statusText.innerText = "✅ تمت مشاهدة الإعلان بنجاح واحتساب +100 نقطة!";
-        alert("🎉 مبروك! تمت مشاهدة الإعلان وإضافة 100 نقطة إلى رصيدك.");
-      }).catch((err) => {
-        console.log("Adsgram Event Result:", err);
-        statusText.innerText = "⚠️ تم إغلاق الإعلان أو حدث خطأ في العرض.";
-      });
+      try {
+        const adController = window.Adsgram.init({ blockId: blockId });
+        adController.show().then((result) => {
+          if (!adFinished) {
+            adFinished = true;
+            clearTimeout(timeoutTimer);
+            userData.balance += 100;
+            pushActivityLog(`📺 شاهد ${userData.name} إعلاناً وحصل على +100 نقطة`);
+            saveData();
+            statusText.innerText = "✅ تمت مشاهدة الإعلان بنجاح (+100 نقطة)!";
+            alert("🎉 مبروك! تمت مشاهدة الإعلان واستلام 100 نقطة.");
+          }
+        }).catch((err) => {
+          if (!adFinished) {
+            adFinished = true;
+            clearTimeout(timeoutTimer);
+            console.error("Adsgram Error:", err);
+            statusText.innerText = "⚠️ تم إغلاق الإعلان أو حدث خطأ في العرض.";
+          }
+        });
+      } catch (e) {
+        if (!adFinished) {
+          adFinished = true;
+          clearTimeout(timeoutTimer);
+          statusText.innerText = "❌ خطأ في الاتصال بالمكتبة.";
+        }
+      }
     }
 
     function renderLeaderboard(type) {
