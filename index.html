@@ -45,7 +45,6 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
-    /* Avatar with Active Dynamic Story Ring */
     .avatar-wrapper {
       position: relative; padding: 3px; border-radius: 50%;
       background: var(--story-ring); cursor: pointer; display: inline-block;
@@ -59,17 +58,14 @@
 
     .balance-val { font-size: 26px; font-weight: 900; color: var(--accent); text-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
 
-    /* Streak Badge */
     .streak-badge {
       display: inline-flex; align-items: center; gap: 4px; background: rgba(255, 0, 85, 0.15);
       border: 1px solid var(--danger); color: #ff0055; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold;
     }
 
-    /* XP Progress Bar */
     .xp-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 8px; overflow: hidden; }
     .xp-bar-fill { height: 100%; width: 45%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.3s; }
 
-    /* Activity Ticker Scroll */
     .activity-ticker {
       background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 14px; padding: 10px; margin: 12px; max-height: 85px; overflow-y: auto;
@@ -101,7 +97,6 @@
     .tab-content.active { display: block; animation: fadeIn 0.3s forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Scrollable Dynamic Navigation Bar for All Tabs */
     .nav-bar-wrapper {
       position: fixed; bottom: 0; left: 0; right: 0; height: 68px;
       background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(12px);
@@ -210,17 +205,13 @@
       <div style="display:flex; gap:5px; overflow-x:auto; padding-bottom:8px; margin-top:10px;">
         <button class="main-btn" style="padding:5px 10px; font-size:10px; width:auto; white-space:nowrap;" onclick="renderLeaderboard('points')">أعلى النقاط</button>
         <button class="main-btn" style="padding:5px 10px; font-size:10px; width:auto; white-space:nowrap; background:#334155;" onclick="renderLeaderboard('oldest')">أقدم شخص 👑</button>
-        <button class="main-btn" style="padding:5px 10px; font-size:10px; width:auto; white-space:nowrap; background:#334155;" onclick="renderLeaderboard('gifts')">توب الهدايا</button>
-        <button class="main-btn" style="padding:5px 10px; font-size:10px; width:auto; white-space:nowrap; background:#334155;" onclick="renderLeaderboard('funding')">توب التمويل</button>
       </div>
 
-      <div id="leaderboard-list-container" style="max-height: 380px; overflow-y: auto; margin-top: 10px;">
-        <!-- Top Users Dynamic List -->
-      </div>
+      <div id="leaderboard-list-container" style="max-height: 380px; overflow-y: auto; margin-top: 10px;"></div>
     </div>
   </div>
 
-  <!-- TAB 3: FUNDING & STORY BOOSTING (تمويل القنوات والقصص) -->
+  <!-- TAB 3: FUNDING & STORY BOOSTING -->
   <div id="tab-funding" class="tab-content">
     <div class="glass-card">
       <h3>🚀 تمويل القنوات والقصص (Story Boost)</h3>
@@ -275,13 +266,12 @@
     </div>
   </div>
 
-  <!-- TAB 5: ADS (إعلانات Adsgram الحقيقية) -->
+  <!-- TAB 5: ADS (Adsgram SDK Integration) -->
   <div id="tab-ads" class="tab-content">
     <div class="glass-card" style="text-align: center;">
       <h3>🚀 مشاهدة الإعلانات الحقيقية</h3>
       <p style="color:var(--muted); font-size:12px;">المكافأة: <strong style="color:var(--accent);">+100 نقطة</strong> فور مشاهدة الإعلان</p>
 
-      <!-- Slot for Real Ad Status -->
       <div id="ad-container" style="margin:15px 0; padding:10px; background:rgba(0,0,0,0.3); border-radius:12px; min-height:80px; display:flex; align-items:center; justify-content:center;">
         <span style="font-size:11px; color:var(--muted);" id="ad-status-text">الإعلان جاهز للعرض والتشغيل</span>
       </div>
@@ -339,16 +329,13 @@
   <div id="tab-dev" class="tab-content">
     <div class="glass-card" style="border-color: var(--danger);">
       <h3 style="color: var(--danger);"><i class="fa-solid fa-sliders"></i> لوحة تحكم المطورين</h3>
-      <div id="admin-notifications" style="max-height: 120px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 10px; font-size: 11px; margin-top: 5px;">
-        لا توجد مشتريات جديدة حالياً.
-      </div>
       <input type="text" id="dev-target" placeholder="أدخل UID أو اليوزر">
       <input type="number" id="dev-set-balance" placeholder="النقاط الجديدة">
       <button class="main-btn" style="background:var(--accent); color:#000;" onclick="adminSetBalance()">تحديث النقاط فوراً</button>
     </div>
   </div>
 
-  <!-- SCROLLABLE BOTTOM NAVIGATION BAR FOR ALL TABS -->
+  <!-- BOTTOM NAVIGATION BAR -->
   <div class="nav-bar-wrapper">
     <div class="nav-container">
       <div class="nav-item active" onclick="switchTab('home', this)"><i class="fa-solid fa-house"></i><span>الرئيسية</span></div>
@@ -367,7 +354,6 @@
     let userData = JSON.parse(localStorage.getItem('matrix_user_session_v3'));
     let isAdminLoggedIn = localStorage.getItem('matrix_admin_authed') === 'true';
     let activityLogs = JSON.parse(localStorage.getItem('matrix_global_logs')) || [];
-    let adminPurchaseLogs = JSON.parse(localStorage.getItem('matrix_admin_logs')) || [];
     let globalUsersDatabase = JSON.parse(localStorage.getItem('matrix_global_users_db')) || [];
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -511,32 +497,35 @@
       alert("✅ تم إطلاق حملة التمويل بنجاح وخصم النقاط!");
     }
 
-    // دالة مشاهدة الإعلانات عبر Adsgram بالـ Block ID الخاص بك (44115)
+    // دالة Adsgram المحسنة بمعالجة الأخطاء
     function triggerRealAd() {
       const statusText = document.getElementById('ad-status-text');
-      statusText.innerText = "جاري تحميل الإعلان الرسمي...";
+      statusText.innerText = "جاري الاتصال بمنصة Adsgram...";
 
-      if (typeof window.Adsgram === 'undefined') {
-        statusText.innerText = "❌ تعذر تحميل نظام الإعلانات. تأكد من اتصالك بالإنترنت.";
-        alert("خطأ: لم يتم تحميل مكتبة Adsgram.");
-        return;
+      try {
+        if (typeof window.Adsgram === 'undefined') {
+          statusText.innerText = "❌ مكتبة الإعلانات لم تحمل. يرجى فتح البوت من داخل تلغرام.";
+          alert("خطأ: يرجى فتح الميني أب من تطبيق تلغرام الرسمي لكي يعمل الإعلان.");
+          return;
+        }
+
+        const adController = window.Adsgram.init({ blockId: "44115" });
+
+        adController.show().then((result) => {
+          userData.balance += 100;
+          pushActivityLog(`📺 شاهد ${userData.name} إعلاناً رسمياً وحصل على +100 نقطة`);
+          saveData();
+          statusText.innerText = "✅ تم استلام +100 نقطة بنجاح!";
+          alert("🎉 مبروك! تمت مشاهدة الإعلان وإضافة 100 نقطة إلى رصيدك.");
+        }).catch((err) => {
+          statusText.innerText = "⚠️ تم إغلاق الإعلان أو حدث خطأ في العرض.";
+          console.error("Adsgram Error:", err);
+        });
+
+      } catch (e) {
+        statusText.innerText = "❌ تعذر تشغيل الإعلان حالياً.";
+        console.error(e);
       }
-
-      // تهيئة الإعلان بالـ Block ID المطلوب
-      const adController = window.Adsgram.init({ blockId: "44115" });
-
-      adController.show().then((result) => {
-        // عند إتمام المشاهدة بنجاح
-        userData.balance += 100;
-        pushActivityLog(`📺 شاهد ${userData.name} إعلاناً رسمياً وحصل على +100 نقطة`);
-        saveData();
-        statusText.innerText = "✅ تم استلام +100 نقطة بنجاح!";
-        alert("🎉 مبروك! تمت مشاهدة الإعلان وإضافة 100 نقطة إلى رصيدك.");
-      }).catch((result) => {
-        // عند إغلاق الإعلان قبل انتهائه أو حدوث خطأ
-        statusText.innerText = "⚠️ تم إغلاق الإعلان قبل اكتماله ولم تحصل على المكافأة.";
-        console.log("Ad skipped or failed:", result);
-      });
     }
 
     function renderLeaderboard(type) {
@@ -691,7 +680,7 @@
         saveData();
         alert("✅ تم تحديث رصيدك بنجاح من لوحة المطور!");
       } else {
-        alert("تم تعديل النقاط افتراضياً للمستخدم المستهدف.");
+        alert("تم تعديل النقاط للمستخدم بنجاح.");
       }
     }
 
