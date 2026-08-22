@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Adsgram Test</title>
   
-  <!-- 1. استدعاء سكريبت تلغرام الرسمي -->
+  <!-- 1. مكتبة تلغرام الرسمية -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
-  <!-- 2. استدعاء مكتبة Adsgram الرسمية -->
+  <!-- 2. مكتبة Adsgram الرسمية -->
   <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 
   <style>
@@ -36,35 +36,36 @@
       margin-top: 15px;
       font-size: 14px;
       color: #38bdf8;
+      text-align: center;
+      padding: 0 10px;
     }
   </style>
 </head>
 <body>
 
-  <h2>💎 تجربة إعلانات Adsgram</h2>
+  <h2>💎 تجربة إعلانات Adsgram الرسمية</h2>
   <button class="btn" onclick="showTestAd()">مشاهدة إعلان تجريبي 🚀</button>
   <div id="status">اضغط على الزر لعرض الإعلان</div>
 
   <script>
-    // تهيئة تطبيق التلغرام
     window.Telegram.WebApp.ready();
 
     function showTestAd() {
       const status = document.getElementById('status');
-      status.innerText = "جاري تحميل الإعلان...";
+      status.innerText = "جاري الاتصال وسحب الإعلان...";
 
       if (typeof window.Adsgram === 'undefined') {
         status.innerText = "❌ افتح الصفحة داخل تطبيق تلغرام!";
         return;
       }
 
-      // المعرف التجريبي الرسمي المعتمد من Adsgram لاختبار الإعلانات
-      const adController = window.Adsgram.init({ blockId: "check-block-id" });
+      // int-1229 هو المعرف التجريبي المعتمد من Adsgram لاختبار الإعلانات المباشرة
+      const adController = window.Adsgram.init({ blockId: "int-1229" });
 
       adController.show().then((result) => {
-        status.innerText = "🎉 تم عرض الإعلان التجريبي بنجاح واستلام المكافأة!";
+        status.innerText = "🎉 تم عرض الإعلان بنجاح واستلام المكافأة!";
       }).catch((error) => {
-        status.innerText = "⚠️ تم إغلاق الإعلان أو حدث خطأ: " + JSON.stringify(error);
+        status.innerText = "⚠️ خطأ/إغلاق: " + (error.description || JSON.stringify(error));
       });
     }
   </script>
