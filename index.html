@@ -3,10 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Adsgram Test</title>
+  <title>GigaPub Ad Test</title>
   
+  <!-- 1. سكريبت تلغرام الرسمي -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+  
+  <!-- 2. سكريبت GigaPub بالـ ID الخاص بك (7848) -->
+  <script src="https://ad.gigapub.tech/script?id=7848"></script>
 
   <style>
     body {
@@ -31,60 +34,58 @@
       max-width: 350px;
     }
     .btn {
-      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      background: linear-gradient(135deg, #10b981, #059669);
       color: white;
       border: none;
       padding: 14px;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: bold;
       border-radius: 12px;
       cursor: pointer;
       width: 100%;
-      margin-top: 10px;
+      margin-top: 15px;
     }
-    #status { margin-top: 15px; font-size: 13px; color: #38bdf8; }
+    #status {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #38bdf8;
+    }
   </style>
 </head>
 <body>
 
   <div class="card">
-    <h2>🚀 اختبار Adsgram المباشر</h2>
-    <p style="color:#94a3b8; font-size:12px;">البلوك: <b>44130</b></p>
-
-    <!-- زر مع وضع التجربة المضمون -->
-    <button class="btn" onclick="showAd(true)">تجربة العرض (Test Mode) 🧪</button>
+    <h2>⚡ إعلانات GigaPub</h2>
+    <p style="color: #94a3b8; font-size: 12px;">مُعرف القناة: 7848</p>
     
-    <!-- زر الإعلانات الحقيقية -->
-    <button class="btn" style="background:#22c55e;" onclick="showAd(false)">طلب إعلان حقيقي 💎</button>
-
-    <div id="status">جاهز للاختبار</div>
+    <button class="btn" onclick="watchGigaAd()">مشاهدة الإعلان والمكافأة 💎</button>
+    <div id="status">اضغط لعرض الإعلان مباشرة</div>
   </div>
 
   <script>
     window.Telegram.WebApp.ready();
 
-    function showAd(isTest) {
+    function watchGigaAd() {
       const status = document.getElementById('status');
-      status.innerText = "جاري طلب الإعلان...";
+      status.innerText = "جاري تحميل إعلان GigaPub...";
 
-      if (typeof window.Adsgram === 'undefined') {
-        status.innerText = "❌ افتح الصفحة من داخل التلغرام";
+      if (typeof window.showGiga !== 'function') {
+        status.innerText = "❌ لم يتم تحميل سكريبت GigaPub بنجاح";
         return;
       }
 
-      // إرسال debug: true لإجبار المنصة على إرجاع إعلان فحص تجريبي
-      const adController = window.Adsgram.init({ 
-        blockId: "44130",
-        debug: isTest 
-      });
-
-      adController.show().then((result) => {
-        status.innerText = "🎉 تم مشاهدة الإعلان بنجاح واستلام المكافأة!";
-        alert("🎉 مبروك! نجحت العملية وحصلت على المكافأة.");
-      }).catch((error) => {
-        console.log("Adsgram Error:", error);
-        status.innerText = "⚠️ لم يتوفر إعلان حقيقي حالياً (No Fill) أو تم الإغلاق.";
-      });
+      // استدعاء دالة العرض الخاصة بـ GigaPub
+      window.showGiga()
+        .then(() => {
+          // كود منح المكافأة للمستخدم عند اكتمال الإعلان
+          status.innerText = "🎉 تم مشاهدة الإعلان بنجاح وحساب المكافأة!";
+          alert("🎉 مبروك! حصلت على المكافأة.");
+        })
+        .catch((e) => {
+          // التعامل مع الأخطاء أو إلغاء العرض
+          console.error("GigaPub Error:", e);
+          status.innerText = "⚠️ تعذر عرض الإعلان أو تم إغلاقه.";
+        });
     }
   </script>
 </body>
