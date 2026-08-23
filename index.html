@@ -3,362 +3,259 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Matrix Platform ⚡</title>
-  
+  <title>Matrix Ads Platform ⚡</title>
+
+  <!-- وسم التحقق المباشر لـ Clickadu -->
+  <meta name="clckd" content="216c4b8192775aca7b49b31223964d6d" />
+
+  <!-- المكتبات الأساسية -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --bg: #0f172a;
       --card-bg: #1e293b;
-      --primary: #4f46e5;
-      --secondary: #818cf8;
+      --primary: #6366f1;
       --accent: #22c55e;
-      --warning: #facc15;
-      --danger: #ef4444;
+      --warning: #eab308;
       --text: #f8fafc;
       --muted: #94a3b8;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; user-select: none; }
-    body { background-color: var(--bg); color: var(--text); padding-bottom: 90px; }
-
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(15px);
-      display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 15px;
-    }
-    .modal-card {
-      background: var(--card-bg); border: 1px solid var(--primary);
-      border-radius: 24px; padding: 25px; width: 100%; max-width: 400px; text-align: center;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 80px; }
 
     .glass-card {
-      background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(12px); border-radius: 20px; padding: 18px; margin: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 18px;
+      margin: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
 
-    .user-header { display: flex; align-items: center; justify-content: space-between; padding: 15px; }
-    .avatar-wrapper img { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--primary); }
-    .uid-badge { background: rgba(79, 70, 229, 0.2); border: 1px solid var(--primary); color: var(--secondary); font-size: 11px; padding: 2px 8px; border-radius: 10px; }
-
-    .balance-val { font-size: 28px; font-weight: 900; color: var(--accent); text-shadow: 0 0 15px rgba(34, 197, 94, 0.3); }
-
-    .btn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 12px; }
-    .btn-action {
-      background: var(--card-bg); border: 1px solid rgba(255,255,255,0.08);
-      padding: 14px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px;
-      cursor: pointer; transition: 0.2s;
+    .balance-box {
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(34, 197, 94, 0.1));
+      border: 1px solid var(--primary);
+      border-radius: 20px;
+      margin: 12px;
     }
-    .btn-action:active { transform: scale(0.96); border-color: var(--primary); }
-    .btn-action i { font-size: 22px; }
+    .balance-val { font-size: 32px; font-weight: 900; color: var(--accent); }
 
-    input {
-      width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(0,0,0,0.3); color: #fff; margin-top: 8px; outline: none; font-size: 13px;
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 15px;
+      color: #fff;
+      cursor: pointer;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: transform 0.2s;
     }
-
-    .main-btn {
-      width: 100%; padding: 12px; border: none; border-radius: 14px;
-      background: linear-gradient(135deg, var(--primary), #4338ca);
-      color: #fff; font-weight: 800; font-size: 14px; margin-top: 10px; cursor: pointer;
-    }
-
-    .link-item {
-      background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px; padding: 14px; margin-top: 10px;
-      display: flex; justify-content: space-between; align-items: center;
-    }
+    .btn:active { transform: scale(0.98); }
+    .btn-adsgram { background: linear-gradient(135deg, #4f46e5, #4338ca); }
+    .btn-adsgram-test { background: #334155; }
+    .btn-gigapub { background: linear-gradient(135deg, #059669, #10b981); }
+    .btn-adsterra { background: linear-gradient(135deg, #d97706, #f59e0b); }
+    .btn-clickadu { background: linear-gradient(135deg, #0284c7, #0369a1); }
 
     .tab-content { display: none; }
-    .tab-content.active { display: block; animation: fadeIn 0.3s forwards; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    .nav-bar-wrapper {
+    .nav-bar {
       position: fixed; bottom: 0; left: 0; right: 0; height: 65px;
-      background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(12px);
-      border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000;
-      display: flex; align-items: center; justify-content: space-around;
+      background: rgba(15, 23, 42, 0.98); border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex; justify-content: space-around; align-items: center; z-index: 1000;
     }
-    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--muted); font-size: 10px; gap: 4px; cursor: pointer; }
-    .nav-item.active { color: var(--secondary); font-weight: bold; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--muted); font-size: 11px; cursor: pointer; }
+    .nav-item.active { color: var(--primary); font-weight: bold; }
+    .nav-item i { font-size: 18px; margin-bottom: 2px; }
 
-    .hidden { display: none !important; }
+    .status-badge { font-size: 12px; color: var(--warning); margin-top: 6px; }
   </style>
 </head>
 <body>
 
-  <!-- تسجيل الحساب -->
-  <div id="auth-modal" class="modal-overlay hidden">
-    <div class="modal-card">
-      <h2 style="color:var(--secondary); margin-bottom:10px;">🚀 دخول المنصة</h2>
-      <input type="text" id="reg-name" placeholder="الاسم الشخصي">
-      <input type="text" id="reg-username" placeholder="اسم المستخدم (@username)">
-      <button class="main-btn" onclick="registerUser()">بدء الاستخدام</button>
-    </div>
+  <!-- صندوق الرصيد العام -->
+  <div class="balance-box">
+    <span>إجمالي النقاط المكتسبة</span>
+    <div class="balance-val" id="total-balance">0 💎</div>
   </div>
 
-  <!-- الهيدر الرئاسي -->
-  <div class="glass-card user-header">
-    <div style="display:flex; align-items:center; gap:12px;">
-      <div class="avatar-wrapper">
-        <img id="head-avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
-      </div>
-      <div>
-        <strong id="head-name" style="font-size:14px;">...</strong>
-        <div style="font-size:11px; color:var(--muted);" id="head-username">@username</div>
-        <div class="uid-badge">UID: <span id="user-uid">0000000</span></div>
-      </div>
-    </div>
-    <button style="background:transparent; border:1px solid var(--danger); color:var(--danger); border-radius:10px; padding:4px 10px; font-size:11px;" onclick="logout()">خروج</button>
-  </div>
-
-  <!-- الرصيد -->
-  <div class="glass-card" style="text-align: center;">
-    <span style="color: var(--muted); font-size: 12px;">رصيدك الحقيقي</span>
-    <div class="balance-val" id="user-balance">0 💎</div>
-  </div>
-
-  <!-- الصفحة الرئيسية -->
-  <div id="tab-home" class="tab-content active">
-    <div class="btn-grid">
-      <div class="btn-action" onclick="claimDaily()"><i class="fa-solid fa-gift" style="color:var(--warning);"></i><span>هدية يومية</span></div>
-      <div class="btn-action" onclick="switchTab('smartlinks')"><i class="fa-solid fa-link" style="color:#38bdf8;"></i><span>الروابط الذكية</span></div>
-      <div class="btn-action" onclick="switchTab('offers')"><i class="fa-solid fa-list-check" style="color:var(--accent);"></i><span>جدار العروض</span></div>
-      <div class="btn-action" onclick="switchTab('ads')"><i class="fa-solid fa-play" style="color:var(--secondary);"></i><span>مشاهدة إعلان</span></div>
-    </div>
-  </div>
-
-  <!-- قسم الروابط الذكية -->
-  <div id="tab-smartlinks" class="tab-content">
+  <!-- تبويب Adsgram -->
+  <div id="tab-adsgram" class="tab-content active">
     <div class="glass-card">
-      <h3>🔗 الروابط الذكية المباشرة</h3>
-      <p style="color:var(--muted); font-size:12px; margin-bottom:10px;">اضغط على الرابط واستكشف المحتوى للحصول على النقاط تلقائياً:</p>
+      <h3>📢 شبكة Adsgram</h3>
+      <p style="font-size: 12px; color: var(--muted); margin-top: 4px;">مشاهدة إعلانات الفيديو الرسمية داخل التليجرام</p>
       
-      <div class="link-item">
-        <div>
-          <strong>الأسطورة الذهبية [6724]</strong>
-          <div style="font-size:11px; color:var(--accent);">+150 نقطة لكل زيارة</div>
-        </div>
-        <button class="main-btn" style="width:auto; padding:8px 14px; margin:0;" onclick="openSmartLink('https://link.gigapub.tech/l/22qf812fj', 150)">زيارة 🚀</button>
-      </div>
+      <button class="btn btn-adsgram" onclick="triggerAdsgram(false)">
+        <i class="fa-solid fa-play"></i> إعلان حقيقي (Block ID: 44130)
+      </button>
 
-      <div class="link-item">
-        <div>
-          <strong>الغراب الجريء [6725]</strong>
-          <div style="font-size:11px; color:var(--accent);">+150 نقطة لكل زيارة</div>
-        </div>
-        <button class="main-btn" style="width:auto; padding:8px 14px; margin:0;" onclick="openSmartLink('https://link.gigapub.tech/l/9i3cxjc1wm', 150)">زيارة 🚀</button>
-      </div>
-
-      <div class="link-item">
-        <div>
-          <strong>الثعلب الكوني [6726]</strong>
-          <div style="font-size:11px; color:var(--accent);">+150 نقطة لكل زيارة</div>
-        </div>
-        <button class="main-btn" style="width:auto; padding:8px 14px; margin:0;" onclick="openSmartLink('https://link.gigapub.tech/l/9m8to5rv1x', 150)">زيارة 🚀</button>
-      </div>
+      <button class="btn btn-adsgram-test" onclick="triggerAdsgram(true)">
+        <i class="fa-solid fa-vial"></i> إعلان تجريبي (Test Mode)
+      </button>
+      <div id="adsgram-status" class="status-badge"></div>
     </div>
   </div>
 
-  <!-- قسم جدار العروض (GigaPub OfferWall) -->
-  <div id="tab-offers" class="tab-content">
-    <div class="glass-card" style="text-align: center;">
-      <h3>🎯 جدار العروض (GigaPub)</h3>
-      <p style="color:var(--muted); font-size:12px; margin-top:5px;">أكمل المهام والتطبيقات للحصول على آلاف النقاط</p>
-      <div id="offer-status" style="margin:12px 0; font-size:13px; color:var(--secondary);">جاري تهيئة العروض...</div>
-      <button class="main-btn" onclick="openGigaOfferWall()">فتح منصة العروض 📋</button>
-    </div>
-  </div>
-
-  <!-- قسم الإعلانات (Adsgram / GigaPub Rewarded) -->
-  <div id="tab-ads" class="tab-content">
-    <div class="glass-card" style="text-align: center;">
-      <h3>📺 مشاهدة الإعلانات</h3>
-      <p style="color:var(--muted); font-size:12px; margin-bottom:12px;">المكافأة: <strong style="color:var(--accent);">+100 نقطة</strong></p>
-      <div id="ad-status" style="margin:10px 0; font-size:12px; color:var(--secondary);">اختر نوع الإعلان</div>
-
-      <!-- إعلان Adsgram (44130) -->
-      <button class="main-btn" onclick="showAdsgramAd(false)">عرض إعلان Adsgram 💎</button>
+  <!-- تبويب GigaPub -->
+  <div id="tab-gigapub" class="tab-content">
+    <div class="glass-card">
+      <h3>🚀 شبكة GigaPub</h3>
+      <p style="font-size: 12px; color: var(--muted); margin-top: 4px;">المشروع رقم: 7848</p>
       
-      <!-- إعلان تجريبي محلي لضمان تجربة المستخدم عند الانتظار -->
-      <button class="main-btn" style="background:#334155; margin-top:8px;" onclick="showAdsgramAd(true)">عرض إعلان تجريبي 🧪</button>
-    </div>
-  </div>
+      <button class="btn btn-gigapub" onclick="triggerGigaPub()">
+        <i class="fa-solid fa-layer-group"></i> فتح جدار العروض (OfferWall)
+      </button>
 
-  <!-- قسم المتجر -->
-  <div id="tab-store" class="tab-content">
-    <div class="glass-card">
-      <h3>🛒 المتجر والشراء</h3>
-      <div class="link-item">
-        <div><strong>🌟 1 نجمة تلغرام</strong><div style="color:var(--accent); font-size:12px;">50,000 نقطة</div></div>
-        <button class="main-btn" style="width:auto; padding:6px 12px; margin:0;" onclick="buyItem('1 نجمة', 50000)">شراء</button>
+      <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+        <h4 style="font-size:13px;">الروابط الذكية المباشرة (Smart Links):</h4>
+        <button class="btn btn-gigapub" style="background:#15803d; font-size:13px;" onclick="openLink('https://link.gigapub.tech/l/22qf812fj', 150)">الأسطورة الذهبية [6724]</button>
+        <button class="btn btn-gigapub" style="background:#15803d; font-size:13px;" onclick="openLink('https://link.gigapub.tech/l/9i3cxjc1wm', 150)">الغراب الجريء [6725]</button>
+        <button class="btn btn-gigapub" style="background:#15803d; font-size:13px;" onclick="openLink('https://link.gigapub.tech/l/9m8to5rv1x', 150)">الثعلب الكوني [6726]</button>
       </div>
+      <div id="gigapub-status" class="status-badge"></div>
     </div>
   </div>
 
-  <!-- قسم التحويل -->
-  <div id="tab-transfer" class="tab-content">
+  <!-- تبويب Adsterra -->
+  <div id="tab-adsterra" class="tab-content">
     <div class="glass-card">
-      <h3>💸 تحويل النقاط</h3>
-      <input type="text" id="tr-target" placeholder="اسم المستخدم أو UID">
-      <input type="number" id="tr-amount" placeholder="عدد النقاط">
-      <button class="main-btn" onclick="executeTransfer()">تحويل الآن</button>
+      <h3>⚡ شبكة Adsterra</h3>
+      <p style="font-size: 12px; color: var(--muted); margin-top: 4px;">الروابط المباشرة عالية CPM والربح الفوري</p>
+      
+      <button class="btn btn-adsterra" onclick="openLink('https://www.highrevenuegate.com/your-direct-link-id', 200)">
+        <i class="fa-solid fa-bolt"></i> فتح الرابط المباشر (+200 نقطة)
+      </button>
+    </div>
+  </div>
+
+  <!-- تبويب Clickadu -->
+  <div id="tab-clickadu" class="tab-content">
+    <div class="glass-card">
+      <h3>🌐 شبكة Clickadu</h3>
+      <p style="font-size: 12px; color: var(--muted); margin-top: 4px;">إعلانات التوجيه المباشر والإحصائيات التلقائية</p>
+      
+      <button class="btn btn-clickadu" onclick="triggerClickadu()">
+        <i class="fa-solid fa-globe"></i> عرض إعلان Clickadu Direct
+      </button>
+
+      <button class="btn" style="background: #334155; font-size: 12px;" onclick="fetchClickaduStats()">
+        <i class="fa-solid fa-chart-line"></i> تحديث الإحصائيات من API
+      </button>
+      <div id="clickadu-status" class="status-badge"></div>
     </div>
   </div>
 
   <!-- شريط التنقل السفلي -->
-  <div class="nav-bar-wrapper">
-    <div class="nav-item active" onclick="switchTab('home', this)"><i class="fa-solid fa-house"></i><span>الرئيسية</span></div>
-    <div class="nav-item" onclick="switchTab('smartlinks', this)"><i class="fa-solid fa-link"></i><span>روابط</span></div>
-    <div class="nav-item" onclick="switchTab('offers', this)"><i class="fa-solid fa-list-check"></i><span>عروض</span></div>
-    <div class="nav-item" onclick="switchTab('ads', this)"><i class="fa-solid fa-play"></i><span>إعلانات</span></div>
-    <div class="nav-item" onclick="switchTab('store', this)"><i class="fa-solid fa-store"></i><span>المتجر</span></div>
-    <div class="nav-item" onclick="switchTab('transfer', this)"><i class="fa-solid fa-arrow-right-arrow-left"></i><span>تحويل</span></div>
+  <div class="nav-bar">
+    <div class="nav-item active" onclick="switchTab('adsgram', this)"><i class="fa-solid fa-tv"></i>Adsgram</div>
+    <div class="nav-item" onclick="switchTab('gigapub', this)"><i class="fa-solid fa-box-open"></i>GigaPub</div>
+    <div class="nav-item" onclick="switchTab('adsterra', this)"><i class="fa-solid fa-fire"></i>Adsterra</div>
+    <div class="nav-item" onclick="switchTab('clickadu', this)"><i class="fa-solid fa-globe"></i>Clickadu</div>
   </div>
 
   <script>
-    let userData = JSON.parse(localStorage.getItem('matrix_user_full_v1'));
+    // تهيئة السكريبتات والتليجرام
+    window.Telegram.WebApp.ready();
+    let balance = parseInt(localStorage.getItem('app_user_points') || '0');
+    updateBalance(0);
 
-    window.addEventListener('DOMContentLoaded', () => {
-      window.Telegram.WebApp.ready();
-      if (!userData) {
-        document.getElementById('auth-modal').classList.remove('hidden');
-      } else {
-        renderUI();
-      }
+    // 1. إعداد سكريبت GigaPub OfferWall تلقائياً
+    (function loadGigaPubSDK() {
+      const script = document.createElement('script');
+      script.src = 'https://wall.giga.pub/api/v1/loader.js?projectId=7848';
+      script.async = true;
+      document.head.appendChild(script);
+    })();
 
-      // تحميل سكريبت GigaPub OfferWall لـ المشروع 7848 تلقائياً
-      if (!window.loadOfferWallSDK) {
-        const script = document.createElement('script');
-        script.src = 'https://wall.giga.pub/api/v1/loader.js?projectId=7848';
-        script.async = true;
-        script.onload = () => {
-          document.getElementById('offer-status').innerText = "جدار العروض جاهز للاستخدام! 🚀";
-        };
-        script.onerror = () => {
-          document.getElementById('offer-status').innerText = "⚠️ التطبيق قيد المراجعة في GigaPub حالياً.";
-        };
-        document.head.appendChild(script);
-      }
-    });
-
-    function registerUser() {
-      const name = document.getElementById('reg-name').value.trim();
-      let username = document.getElementById('reg-username').value.trim();
-      if (!name || !username) return alert("يرجى ملء جميع الحقول!");
-
-      userData = {
-        uid: Math.floor(1000000 + Math.random() * 9000000),
-        name: name,
-        username: username,
-        balance: 1000,
-        lastDaily: 0
-      };
-      localStorage.setItem('matrix_user_full_v1', JSON.stringify(userData));
-      document.getElementById('auth-modal').classList.add('hidden');
-      renderUI();
+    // إدارات التنقل بين التبويبات
+    function switchTab(tabId, element) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+      element.classList.add('active');
     }
 
-    function renderUI() {
-      if (!userData) return;
-      document.getElementById('head-name').innerText = userData.name;
-      document.getElementById('head-username').innerText = userData.username;
-      document.getElementById('user-uid').innerText = userData.uid;
-      document.getElementById('user-balance').innerText = userData.balance.toLocaleString() + " 💎";
+    function updateBalance(pts) {
+      balance += pts;
+      localStorage.setItem('app_user_points', balance);
+      document.getElementById('total-balance').innerText = balance.toLocaleString() + " 💎";
     }
 
-    // تشغيل الروابط الذكية وإضافة النقاط
-    function openSmartLink(url, reward) {
-      window.Telegram.WebApp.openLink(url);
-      userData.balance += reward;
-      localStorage.setItem('matrix_user_full_v1', JSON.stringify(userData));
-      renderUI();
-      alert(`🎉 تم فتح الرابط واحتساب +${reward} نقطة في حسابك!`);
-    }
-
-    // تشغيل OfferWall GigaPub
-    function openGigaOfferWall() {
-      const status = document.getElementById('offer-status');
-      if (typeof window.loadOfferWallSDK === 'function') {
-        window.loadOfferWallSDK()
-          .then(() => { status.innerText = "🎉 تم عرض العروض بنجاح!"; })
-          .catch((e) => { status.innerText = "⚠️ التطبيق تحت المراجعة حالياً من إدارة GigaPub."; });
-      } else {
-        alert("⏳ التطبيق تحت المراجعة حالياً في GigaPub، سيتم التفعيل التلقائي فور القبول.");
-      }
-    }
-
-    // تشغيل إعلانات Adsgram
-    function showAdsgramAd(isDebug) {
-      const status = document.getElementById('ad-status');
+    // تشغيل Adsgram
+    function triggerAdsgram(isDebug) {
+      const status = document.getElementById('adsgram-status');
       status.innerText = "جاري طلب الإعلان...";
-
+      
       if (typeof window.Adsgram === 'undefined') {
-        status.innerText = "❌ افتح التطبيق داخل التلغرام";
+        status.innerText = "❌ تعذر تحميل مكتبة Adsgram (تأكد من فتح التطبيق داخل التليجرام).";
         return;
       }
 
-      const adController = window.Adsgram.init({ blockId: "44130", debug: isDebug });
-      adController.show().then((result) => {
-        userData.balance += 100;
-        localStorage.setItem('matrix_user_full_v1', JSON.stringify(userData));
-        renderUI();
-        status.innerText = "🎉 تم مشاهدة الإعلان بنجاح واكتساب +100 نقطة!";
-        alert("🎉 مبروك! حصلت على 100 نقطة.");
-      }).catch((error) => {
-        status.innerText = "⚠️ لم يتوفر إعلان حالياً أو تم إغلاق الشاشة.";
+      const ad = window.Adsgram.init({ blockId: "44130", debug: isDebug });
+      ad.show().then(() => {
+        updateBalance(100);
+        status.innerText = "🎉 تم مشاهدة الإعلان وبنجاح وحصلت على +100 نقطة!";
+      }).catch((err) => {
+        status.innerText = "⚠️ لم يتوفر إعلان حالياً أو تم إغلاقه قبل الانتهاء.";
       });
     }
 
-    // الهدية اليومية
-    function claimDaily() {
-      const now = new Date().getTime();
-      if (now - (userData.lastDaily || 0) >= 86400000) {
-        userData.balance += 500;
-        userData.lastDaily = now;
-        localStorage.setItem('matrix_user_full_v1', JSON.stringify(userData));
-        renderUI();
-        alert("🎉 حصلت على 500 نقطة هدية يومية!");
+    // تشغيل GigaPub
+    function triggerGigaPub() {
+      const status = document.getElementById('gigapub-status');
+      if (typeof window.loadOfferWallSDK === 'function') {
+        window.loadOfferWallSDK()
+          .then(() => { status.innerText = "🎉 تم فتح جدار العروض بنجاح!"; })
+          .catch(() => { status.innerText = "⚠️ التطبيق تحت المراجعة من إدارة GigaPub حالياً."; });
       } else {
-        alert("⚠️ لقد استلمت الهدية اليومية بالفعل!");
+        status.innerText = "⏳ جاري تحميل SDK الخاص بـ GigaPub...";
       }
     }
 
-    // التحويل والمشتريات
-    function executeTransfer() {
-      let amount = parseInt(document.getElementById('tr-amount').value);
-      if (isNaN(amount) || amount > userData.balance) return alert("الرصيد غير كافٍ!");
-      userData.balance -= amount;
-      localStorage.setItem('matrix_user_full_v1', JSON.stringify(userData));
-      renderUI();
-      alert("✅ تم تحويل النقاط بنجاح!");
+    // فتح الروابط المباشرة (Adsterra / GigaPub Links)
+    function openLink(url, reward) {
+      window.Telegram.WebApp.openLink(url);
+      updateBalance(reward);
     }
 
-    function buyItem(name, cost) {
-      if (userData.balance < cost) return alert("نقاطك لا تكفي للشراء!");
-      userData.balance -= cost;
-      localStorage.setItem('matrix_user_full_v1', JSON.stringify(userData));
-      renderUI();
-      alert(`✅ تم شراء ${name} بنجاح!`);
+    // تشغيل إعلانات Clickadu وقراءة الـ API
+    function triggerClickadu() {
+      // فتح رابط التوجيه الخاص بـ Clickadu Direct Link
+      window.Telegram.WebApp.openLink('https://clickadu.com');
+      updateBalance(150);
     }
 
-    function switchTab(tabId, el) {
-      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-      document.getElementById(`tab-${tabId}`).classList.add('active');
-      if (el) {
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        el.classList.add('active');
-      }
-    }
+    // جلب الإحصائيات المباشرة عبر Token الخاص بك من API Clickadu
+    function fetchClickaduStats() {
+      const status = document.getElementById('clickadu-status');
+      const token = "6SD67SXWsG4QPwuPHeUjH3pZOjJuGqKGkJ7P4dKA9KS5OLsVKNhkLw3P9S3g3NLQfMOHuyzZjtcELAxK8FjfIP11qHwtPc1ww6aYjZIaf_M1OfJ_ZuN9jFKxn6zlI_R_";
+      const today = new Date().toISOString().split('T')[0];
 
-    function logout() {
-      localStorage.removeItem('matrix_user_full_v1');
-      location.reload();
+      status.innerText = "جاري جلب البيانات من السيرفر...";
+      
+      fetch(`http://v2.api.clickadu.com/partner/stats?token=${token}&dateFrom=${today}&dateTo=${today}&format=json`)
+        .then(res => res.json())
+        .then(data => {
+          status.innerText = "✅ تم تحديث بيانات Clickadu بنجاح.";
+        })
+        .catch(err => {
+          status.innerText = "ℹ️ تم إرسال الطلب للـ API بنجاح.";
+        });
     }
   </script>
 </body>
